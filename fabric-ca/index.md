@@ -1,38 +1,11 @@
 # Fabric-Ca
 
-## Network
-In this example we are going to build the following fabric network. As you can see in the picture below our network will have three organizations.
+## Overview
 
-1. tls.universe.at; this organization is responsible for providing the tls-ca for the network
-2. orderer.universe.at; this organization is responsible for the underlyling ordering-service. In this szenario we are goning to use a solo orderer.
-3. mars.universe.at; this is the only organization which is using the blockchain.
+- [Network overview](./01-network.md)
+- [Create TLS-CA](./02-tls-ca.md)
 
-Each organization has it's one CA (Certificate Authority) and one channel is used.
 
-## Projekt setup
-To create such a network we would like to use the following basic file structure in your workspace.
-
-```bash
-mkdir -p network/{tls.universe.at,orderer.universe.at,mars.universe.at}
-tree .
-.
-└── network
-    ├── mars.universe.at
-    ├── orderer.universe.at
-    └── tls.universe.at
-```
-
-## Create the Network Artifacts
-As a frist step we create the CA Service for the tls.universe.at organization. The TLS CA will be responsible for providing TLS Certificate to the Network for TLS Authentication.
-
-### tls.universe.at
-To create a TLS CA the following can follow to following steps:
-
-1. create the home directories for the CA
-2. create the corresponding docker-compose file
-3. start the CA
-4. enroll the tls-ca-admin
-5. register the peer and orderer itentities 
 
 
 
