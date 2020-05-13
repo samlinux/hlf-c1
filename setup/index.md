@@ -25,6 +25,30 @@ timedatectl set-timezone Europe/Vienna
 date
 ```
 
+## Secure your installation
+We secure our installation with ufw.
+```bash
+# check if ufw is installed (should be by default)
+ufw status
+
+# set default behavier
+ufw default deny incoming
+ufw default allow outgoing
+
+# allow only ssh access
+ufw allow ssh
+
+# show added rules
+ufw show added
+
+# enable the firewall
+ufw enable
+
+# check the status again 
+ufw status
+```
+
+
 ## Install Docker
 The following steps are required to install docker on the Droplet.
 
@@ -54,7 +78,6 @@ apt-get install docker-ce docker-ce-cli containerd.io
 
 # check the docker version
 docker --version
-
 ```
 
 ## Install Docker-Compose
@@ -163,7 +186,6 @@ cd fabric-samples/first-network
 # generate Network Artifacts
 ./byfn.sh generate
 
-
 # bring up the Network
 ./byfn.sh up
 
@@ -172,5 +194,4 @@ docker ps
 
 # bring down the Network
 ./byfn.sh down
-
 ```
