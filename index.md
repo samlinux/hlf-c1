@@ -1,11 +1,9 @@
 # Hyperledger Fabric - Fundamentals
-This is my first course !
 
 ## Course overview
 
-### Installation
+## Installation
+- [Prepare and set up the host](./setup/index.md)
 
-### First Network
-
-### Fabric-ca
-- [Overview](./fabric-ca/index.md)
+## Install the morgen.net network
+- [Overview](./morgen.net/index.md)
