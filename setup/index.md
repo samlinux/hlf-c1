@@ -148,7 +148,7 @@ nodejs -v
 mkdir fabric
 cd fabric
 
-# install the latest production release 1.4.x
+# install the latest production release from the 1.4.x branch
 # curl -sSL http://bit.ly/2ysbOFE | bash -s -- <fabric_version> <fabric-ca_version> <thirdparty_version>
 
 curl -sSL http://bit.ly/2ysbOFE | bash -s -- 1.4.6 1.4.6 0.4.18
@@ -161,7 +161,7 @@ vi ~/.profile
 PATH=/root/fabric/fabric-samples/bin:$PATH
 ```
 
-## Install Fabric-Ca binary
+## Install Fabric-CA binary
 
 Install some dependencies on Ubuntu
 ``` bash
@@ -183,15 +183,15 @@ The build your first network (BYFN) scenario provisions a sample Hyperledger Fab
 ```bash
 cd fabric-samples/first-network
 
-# generate Network Artifacts
+# generate network artifacts
 ./byfn.sh generate
 
-# bring up the Network
+# bring up the network
 ./byfn.sh up
 
-# show if some container are running
+# show if some containers are running
 docker ps
 
-# bring down the Network
+# bring down the network
 ./byfn.sh down
 ```
