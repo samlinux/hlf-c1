@@ -7,3 +7,6 @@
 
 ## Install the morgen.net network
 - [Overview](./morgen.net/index.md)
+
+## How to use the Hyperledger Fabric Node SDK
+- [Overview](./nodeSdk/index.md)
