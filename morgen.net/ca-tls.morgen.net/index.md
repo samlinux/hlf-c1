@@ -1,4 +1,4 @@
-# Set up tls.morgen.net
+# Set up ca-tls.morgen.net
 
 ## (1.1) Create the base folders
 Frist we switch into the organisation folder and create the base folders, where our CA is living.
@@ -64,7 +64,7 @@ vi ca/server/crypto/fabric-ca-server-config.yaml
 ca.name: ca-tls.morgen.net
 ```
 
->If you modified any of the values in the CSR block of the configuration yaml file,  you need to delete the fabric-ca-server-tls/ca-cert.pem file and the entire fabric-ca-server-tls/msp folder.  These certificates will be re-generated when you start the CA server in the next step.
+>If you modified any of the values in the CSR block of the configuration yaml file, you need to delete the fabric-ca-server-tls/ca-cert.pem file and the entire fabric-ca-server-tls/msp folder.  These certificates will be re-generated when you start the CA server in the next step.
 
 After this modification we can adjust the docker-compose.yaml file for the final start. We have to change the docker start command from init to start.
 ```bash
@@ -83,4 +83,39 @@ docker-compose ps
 ca-tls.morgen.net   sh -c fabric-ca-server sta ...   Up      0.0.0.0:7052->7052/tcp, 7054/tcp
 ```
 Now your TLS CA is up and running. The next step is to enroll the admin user for this CA and the registration of all TLS identities for this network.
+
+## (1.6) Copy the ca-tls root certificate
+We copy the ca-tls server root ceritficate to the tls-ca client folder for tls authentication.
+This certificate is also known as the TLS CA’s signing certificate and it is going to be used to validate the TLS certificate of the CA.
+```bash
+cp ./ca/server/crypto/ca-cert.pem  ./ca/client/crypto/ca-tls.morgen.net.cert.pem
+````
+
+## (1.7) Enroll the ca admin - preparation
+To enroll the ca admin, we have to set the following evironment variables.
+
+```bash
+export FABRIC_CA_CLIENT_HOME=./ca/client
+export FABRIC_CA_CLIENT_TLS_CERTFILES=crypto/ca-tls.morgen.net.cert.pem
+````
+## (1.8) Enroll ca-tls.morgen-net-admin
+```bash
+fabric-ca-client enroll -d -u https://ca-tls.morgen.net-admin:ca-tls.morgen.net-adminpw@0.0.0.0:7052
+````
+## (1.9) Register tls members of the network 
+According our network structure we register our network members (peers and orderer) to provide TLS communication between the single nodes.
+```bash
+# peer0
+fabric-ca-client register -d --id.name peer0.mars.morgen.net --id.secret peer0PW --id.type peer -u https://0.0.0.0:7052
+
+# peer 1
+fabric-ca-client register -d --id.name peer1.mars.morgen.net --id.secret peer1PW --id.type peer -u https://0.0.0.0:7052
+
+# orderer
+fabric-ca-client register -d --id.name orderer.morgen.net --id.secret ordererPW --id.type orderer -u https://0.0.0.0:7052
+````
+
+
+
+
 

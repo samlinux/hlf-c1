@@ -60,6 +60,9 @@ Now we are ready to set up each organization step by step. We will do that in th
 2. ca-orderer.morgen.net
 3. ca-mars.morgen.net
 
+## How to reset the network
+1. [Instructions to clear the network](./clearSetup.md)
+
 
 
 
