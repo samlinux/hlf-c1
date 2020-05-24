@@ -1,5 +1,6 @@
 # The morgen.net network
 ![morgen.net](../img/the-morgen.net-network.png "morgen.net")
+
 In this scenario we are going to setup a fabric network from scratch. You can find the network topology in the diagram above.
 
 Starting from a single organization we need two more organizations. One for the Ordering-Service and another for the TLS-Service.
