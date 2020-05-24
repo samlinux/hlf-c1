@@ -103,7 +103,7 @@ export FABRIC_CA_CLIENT_TLS_CERTFILES=crypto/ca-tls.morgen.net.cert.pem
 fabric-ca-client enroll -d -u https://ca-tls.morgen.net-admin:ca-tls.morgen.net-adminpw@0.0.0.0:7052
 ````
 ## (1.9) Register tls members of the network 
-According our network structure we register our network members (peers and orderer) to provide TLS communication between the single nodes.
+Based on the given network structure we register our network members (peers and orderer) to provide TLS communication between the single nodes.
 ```bash
 # peer0
 fabric-ca-client register -d --id.name peer0.mars.morgen.net --id.secret peer0PW --id.type peer -u https://0.0.0.0:7052
