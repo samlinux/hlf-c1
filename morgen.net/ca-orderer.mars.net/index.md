@@ -1,6 +1,6 @@
 # Set up ca-orderer.morgen.net
 
-The set up process can be divied into three parts:
+The set up process can be divided into three parts:
 
 1. Basic preparation
 2. Creation of the CA admin 
@@ -69,6 +69,7 @@ Start the orderer ca and check if it is running.
 docker-compose up -d
 docker-compose ps
 ```
+
 ## (1.5) Copy the ca-orderer root certificate
 We copy the ca-orderer server root ceritficate to the tls-orderer client folder for tls authentication.
 This certificate is also known as the TLS CA’s signing certificate and it is going to be used to validate the TLS certificate of the CA.
