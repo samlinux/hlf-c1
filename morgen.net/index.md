@@ -56,7 +56,7 @@ tree .
 ```
 
 Now we are ready to set up each organization step by step. We will do that in the following order.
-1. [ca-tls.morgen.net](./setup-ca-tls.morgen.net.md)
+1. [ca-tls.morgen.net](./ca-tls.morgen.net/index.md)
 2. ca-orderer.morgen.net
 3. ca-mars.morgen.net
 
