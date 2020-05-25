@@ -1,5 +1,6 @@
 # The morgen.net network
 ![morgen.net](../img/the-morgen.net-network.png "morgen.net")
+
 In this scenario we are going to setup a fabric network from scratch. You can find the network topology in the diagram above.
 
 Starting from a single organization we need two more organizations. One for the Ordering-Service and another for the TLS-Service.
@@ -56,9 +57,12 @@ tree .
 ```
 
 Now we are ready to set up each organization step by step. We will do that in the following order.
-1. [ca-tls.morgen.net](./setup-ca-tls.morgen.net.md)
-2. ca-orderer.morgen.net
-3. ca-mars.morgen.net
+1. [ca-tls.morgen.net](./ca-tls.morgen.net/index.md)
+2. [ca-orderer.morgen.net](./ca-orderer.morgen.net/index.md)
+3. [ca-mars.morgen.net](./ca-mars.morgen.net/index.md)
+
+## How to reset the network
+1. [Instructions to clear the network](./clearSetup.md)
 
 
 
