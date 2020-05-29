@@ -7,7 +7,11 @@ cd morgen.net
 
 ## Remove chaincode container
 ```bash
-docker rm -f $(docker ps -a | awk '($2 ~ /dev-peer.*/) {print $1}')
+docker rm -f $(docker ps -a | awk '($2 ~ /dev-peer.*/) {print $1}
+')
+
+docker rm $(docker ps -a -f status=exited -q)
+
 ```
 
 ## Remove production data

@@ -49,6 +49,15 @@ The init command does not actually start the server but generates the required m
 ```bash
 docker-compose up
 ```
+### (1.3.1) What does the CA server init command do?
+The init command does not actually start the server but generates the required metadata if it does not already exist for the server:
+
+- Sets the default the CA Home directory (referred to as FABRIC_CA_HOME in these instructions) to where the fabric-ca-server init command is run.
+- Generates the default configuration file fabric-ca-server-config.yaml that is used as a template for your server configuration in the FABRIC_CA_HOME directory. We refer to this file throughout these instructions as the “configuration .yaml” file.
+- Creates the TLS CA root signed certificate file ca-cert.pem, if it does not already exist in the CA Home directory. This is the self-signed root certificate, meaning it is generated and signed by the TLS CA itself and does not come from another source. This certificate is the public key that must be shared with all clients that want to transact with any node in the organization. When any client or node submits a transaction to another node, it must include this certificate as part of the transaction.
+- Generates the CA server private key and stores it in the FABRIC_CA_HOME directory under /msp/keystore.
+- Initializes a default SQLite database for the server although you can modify the database setting in the configuration .yaml file to use the supported database of your choice. Every time the server is started, it loads the data from this database. If you later switch to a different database such as PostgreSQL or MySQL, and the identities defined in the registry.identites section of the configuration .yaml file don’t exist in that database, they will be registered.
+- Bootstraps the CA server administrator, specified by the -b flag parameters <ADMIN_USER> and <ADMIN_PWD>, onto the server. When the CA server is subsequently started, the admin user is registered with the admin attributes provided in the configuration .yaml file registry section. If this CA will be used to register other users with any of those attributes, then the CA admin user needs to possess those attributes. In other words, the registrar must have the hf.Registrar.Roles attributes before it can register another identity with any of those attributes. Therefore, if this CA admin will be used to register the admin identity for an Intermediate CA, then this CA admin must have the hf.IntermediateCA set to true even though this may not be an intermediate CA server. The default settings already include these attributes.
 
 ## (1.4) Modify the fabric-ca-server-config.yaml
 First we have to give the $USER the right to change the config file.
@@ -85,37 +94,49 @@ ca-tls.morgen.net   sh -c fabric-ca-server sta ...   Up      0.0.0.0:7052->7052/
 Now your TLS CA is up and running. The next step is to enroll the admin user for this CA and the registration of all TLS identities for this network.
 
 ## (1.6) Copy the ca-tls root certificate
-We copy the ca-tls server root ceritficate to the tls-ca client folder for tls authentication.
-This certificate is also known as the TLS CA’s signing certificate and it is going to be used to validate the TLS certificate of the CA.
+Copy the TLS CA root certificate file ca-cert.pem, that was generated when the TLS CA server was started, to a new file name ca-tls.morgen.net.cert.pem. Notice the file name is changed to ca-tls.morgen.net.cert.pem to make it clear this is the root certificate from the TLS CA. Important: This TLS CA root certificate will need to be available on each client system that will run commands against the TLS CA.
+
 ```bash
 cp ./ca/server/crypto/ca-cert.pem  ./ca/client/crypto/ca-tls.morgen.net.cert.pem
 ````
 
 ## (1.7) Enroll the ca admin - preparation
-To enroll the ca admin, we have to set the following evironment variables.
+To enroll the root-tls-ca admin, we have to set the following evironment variables.
 
 ```bash
 export FABRIC_CA_CLIENT_HOME=./ca/client
 export FABRIC_CA_CLIENT_TLS_CERTFILES=crypto/ca-tls.morgen.net.cert.pem
 ````
+
 ## (1.8) Enroll ca-tls.morgen-net-admin
 ```bash
-fabric-ca-client enroll -d -u https://ca-tls.morgen.net-admin:ca-tls.morgen.net-adminpw@0.0.0.0:7052
+fabric-ca-client enroll -d -u https://ca-tls.morgen.net-admin:ca-tls.morgen.net-adminpw@ca-tls.morgen.net:7052 --csr.hosts 'ca-tls.morgen.net'
 ````
+
 ## (1.9) Register tls members of the network 
 Based on the given network structure we register our network members (peers and orderer) to provide TLS communication between the single nodes.
 ```bash
 # peer0
-fabric-ca-client register -d --id.name peer0.mars.morgen.net --id.secret peer0PW --id.type peer -u https://0.0.0.0:7052
+fabric-ca-client register -d --id.name peer0.mars.morgen.net --id.secret peer0PW --id.type peer -u https://ca-tls.morgen.net:7052 --csr.hosts 'peer0.mars.morgen.net'
 
 # peer 1
-fabric-ca-client register -d --id.name peer1.mars.morgen.net --id.secret peer1PW --id.type peer -u https://0.0.0.0:7052
+fabric-ca-client register -d --id.name peer1.mars.morgen.net --id.secret peer1PW --id.type peer -u https://ca-tls.morgen.net:7052 --csr.hosts 'peer1.mars.morgen.net'
 
 # orderer
-fabric-ca-client register -d --id.name orderer.morgen.net --id.secret ordererPW --id.type orderer -u https://0.0.0.0:7052
+fabric-ca-client register -d --id.name orderer.morgen.net --id.secret ordererPW --id.type orderer -u https://ca-tls.morgen.net:7052 --csr.hosts 'orderer.morgen.net'
+
+# register ca-orderer.morgen.net organization CA bootstrap identity with the TLS-CA
+fabric-ca-client register -d --id.name ca-orderer.morgen.net-admin --id.secret ca-orderer-adminpw -u https://ca-tls.morgen.net:7052 --csr.hosts 'ca-orderer.morgen.net'
+
+# register ca-mars.morgen.net organization CA bootstrap identity with the TLS-CA
+fabric-ca-client register -d --id.name ca-mars.morgen.net-admin --id.secret ca-mars-adminpw -u https://ca-tls.morgen.net:7052 --csr.hosts 'ca-mars.morgen.net'
 ````
 
 
+IP SANs (IP subject alternative names).
+
+
+openssl x509 -noout -text -in /etc/letsencrypt/live/careorganise.com/fullchain.pem
 
 
 
