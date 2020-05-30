@@ -13,7 +13,10 @@ A central TLS Service is established to provide the TLS certificates for the who
 In order to be able to address the network members correctly by it`s name and to avoid some common TLS problems we can make some dns entries in the servers hosts file.
 
 ```bash
+# edit local hosts file
 vi /etc/hosts
+
+# add the following domains
 127.0.0.1 ca-tls.morgen.net
 127.0.0.1 ca-orderer.morgen.net
 127.0.0.1 ca-mars.morgen.net
