@@ -48,6 +48,7 @@ sudo rm -R ca-mars.morgen.net/peers
 ## (3) ca-mars.morgen.net 
 ### start with the create.sh script
 
+--> has to be documented
 # (4) create genesis block
 configtxgen -profile OneOrgOrdererGenesis -channelID orderersyschannel -outputBlock ./ca-orderer.morgen.net/orderer/genesis.block
 

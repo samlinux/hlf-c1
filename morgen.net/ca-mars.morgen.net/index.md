@@ -268,7 +268,7 @@ cp ../ca-tls.morgen.net/ca/client/crypto/ca-tls.morgen.net.cert.pem ./peers/peer
 
 #### (3.2.4) Enroll peer0
 Now we can enroll peer0 from the ca-mars.morgen.net CA.
->>> STOP
+
 ```bash
 export FABRIC_CA_CLIENT_MSPDIR=msp
 export FABRIC_CA_CLIENT_HOME=./peers/peer1/
@@ -283,7 +283,7 @@ export FABRIC_CA_CLIENT_MSPDIR=tls-msp
 export FABRIC_CA_CLIENT_TLS_CERTFILES=assets/tls-ca/ca-tls.morgen.net.cert.pem
 
 fabric-ca-client enroll -d -u https://peer1.mars.morgen.net:peer1PW@ca-tls.morgen.net:7052 --enrollment.profile tls --csr.hosts 'peer1.mars.morgen.net'
-````
+```
 
 #### (3.2.6) rename the private key from tls-ca
 ```bash
@@ -298,22 +298,21 @@ We have to set up the organization MSP.
 mkdir -p msp/{admincerts,cacerts,tlscacerts,users}
 ```
 
-## (4.2) copying org mars root ca certificat to msp/cacerts directory
+## (4.3)  Copy necessary certs
+
 ```bash
+# copy org mars root ca certificat to msp/cacerts directory
 cp ./ca/server/crypto/ca-cert.pem ./msp/cacerts/mars.morgen.net-ca-cert.pem
-```
 
-## (4.3) copying TLS CA root certificat to msp/tlscacerts directory
-```bash
+#copy TLS CA root certificat to msp/tlscacerts directory
 cp ../ca-tls.morgen.net/ca/client/crypto/ca-tls.morgen.net.cert.pem ./peers/peer1/assets/tls-ca/
-```
 
-## (4.5) copying org mars admin singning certificat to msp/admincerts directory
-```bash
+# copy org mars admin singning certificat to msp/admincerts directory
 cp ./admin/msp/signcerts/cert.pem  ./msp/admincerts/mars.morgen.net-admin-cert.pem
 ```
 
-# (5) config.yaml
+# (5) Identity Classification
+For identity classification we have to set up the config.yaml file in a given MSP folder.
 
 ```bash
 vi msp/config.yaml
@@ -350,6 +349,7 @@ NodeOUs:
     Certificate: cacerts/0-0-0-0-7054.pem
     OrganizationalUnitIdentifier: orderer
 ```
+
 ```bash
 vi peers/peer0/msp/config.yaml
 NodeOUs:
