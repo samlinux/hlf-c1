@@ -1,0 +1,22 @@
+version: "3.3"
+
+networks:
+  morgen:
+
+services:
+  ca-mars.morgen.net:
+    container_name: ca-mars.morgen.net
+    image: hyperledger/fabric-ca:1.4.6
+    command: /bin/bash -c 'fabric-ca-server init -b ca-mars.morgen.net-admin:${CaMarsAdminPw} --port 7054'
+    environment:
+      - FABRIC_CA_SERVER_HOME=/tmp/hyperledger/fabric-ca/crypto
+      - FABRIC_CA_SERVER_CSR_CN=ca-mars.morgen.net
+      - FABRIC_CA_SERVER_CSR_HOSTS=ca-mars.morgen.net
+      - FABRIC_CA_SERVER_DEBUG=true
+    volumes:
+      - ./ca/server:/tmp/hyperledger/fabric-ca
+      - ./ca/client:/tmp/hyperledger/fabric-ca-client
+    networks:
+      - morgen
+    ports:
+      - 7054:7054

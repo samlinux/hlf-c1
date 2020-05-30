@@ -1,5 +1,5 @@
 # Set up ca-orderer.morgen.net
-The first organisation we are going to set up is the orderer organisation. The set up process can be divided into following main steps:
+The first organization we are going to set up is the orderer organization. The set up process can be divided into following main steps:
 
 1. basic preparation (including TLS certificate for the CA bootstrap identity, docker-compose set up and CA set up process)
 2. the creation of the CA admin 
@@ -86,10 +86,9 @@ vi .env
 
 # add the password in the format: var=value
 CaOrdererAminPw=ca-orderer-adminpw
-````
+```
 >**One note at this point**: It is not allowed to use signs like spaces ( ), hyphen
 (-) or underlines (_) in the variable name.
-
 
 ## (1.3) Initialise the CA
 To initialise the CA we start the CA with the following command. 
@@ -143,21 +142,21 @@ docker-compose ps
 docker-compose logs
 ```
 
-## (1.5) Enroll the ca-orderer.morgen-net-admin - preparation
+## (1.5) Enroll the ca-orderer.morgen.net-admin - preparation
 First we have to set two enviroments variables.
 ```bash
 export FABRIC_CA_CLIENT_HOME=./ca/client/admin
 export FABRIC_CA_CLIENT_TLS_CERTFILES=ca-tls.morgen.net.cert.pem
 ```
 
-## (1.7) Enroll the ca-orderer.morgen-net-admin - enrollement
+## (1.6) Enroll the ca-orderer.morgen-net-admin - enrollement
 After the environment variables are set we can enroll the ca-admin user for this particular organisation.
 ```bash
 fabric-ca-client enroll -d -u https://ca-orderer.morgen.net-admin:ca-orderer-adminpw@ca-orderer.morgen.net:7053  --csr.hosts 'ca-orderer.morgen.net'
 ```
 With these steps we have finally finished the set up process of the ca-orderer.morgen.net CA. Now the admin of this CA can start to interact with this CA to register members for this organization.
 
-## (1.8) Register the members of the network
+## (1.7) Register the members of the network
 As a next step we register the organization members for a later usage. In this organization we are going to use two organization members:
 
 1. one orderer node (we use the solo orderer system) and
@@ -166,7 +165,7 @@ As a next step we register the organization members for a later usage. In this o
 The steps to enroll an identity are basically always the same:
 
 1. We register an identity with the corresponding CA.
-2. We enroll the identity.
+2. We enroll this identity.
 3. If needed, we enroll the TLS identity with the corresponding TLS-CA. Note in our case we have already registered the orderer node TLS identity in previous steps.
 
 Let's go and register the members.
@@ -176,7 +175,7 @@ fabric-ca-client register -d --id.name orderer.morgen.net --id.secret ordererpw 
 
 # admin for the orderer node
 fabric-ca-client register -d --id.name admin-orderer.morgen.net --id.secret org0adminpw --id.type admin --id.attrs "hf.Registrar.Roles=client,hf.Registrar.Attributes=*,hf.Revoker=true,hf.GenCRL=true,admin=true:ecert,abac.init=true:ecert" -u https://ca-orderer.morgen.net:7053 --csr.hosts 'orderer.morgen.net'
-````
+```
 
 # (2) Creation of the Orderer admin
 Now we can set up the admin user for the orderer node. The admin user is required to administrate this orderer node.
@@ -244,7 +243,9 @@ cp ../ca-tls.morgen.net/ca/server/crypto/ca-cert.pem ./orderer/assets/ca-tls.mor
 
 ### (3.3.1) Set environment variables
 We set two environment variables for the enrollment of the orderer.
+
 ```bash
+# set the required environment vars
 export FABRIC_CA_CLIENT_HOME=./orderer
 export FABRIC_CA_CLIENT_TLS_CERTFILES=./assets/ca-tls.morgen.net/ca-tls.morgen.net.cert.pem
 ```
