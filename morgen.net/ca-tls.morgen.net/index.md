@@ -44,9 +44,9 @@ services:
     ports:
       - 7052:7052
 ```
-The set up process of a fabric-ca is basicly divided into two three steps. 
+The set up process of a fabric-ca is basically divided into three steps. 
 1. We have to initialise the CA with the init command.
-2. We have to modify the fabric-ca-client-config.yaml file to our according our needs.
+2. We have to modify the fabric-ca-client-config.yaml file to fit our needs.
 3. Lastly we can start the CA with the start command.
 
 ## (1.3) Initialise the CA
@@ -120,9 +120,9 @@ export FABRIC_CA_CLIENT_TLS_CERTFILES=crypto/ca-tls.morgen.net.cert.pem
 
 ```bash
 fabric-ca-client enroll -d -u https://ca-tls.morgen.net-admin:ca-tls.morgen.net-adminpw@ca-tls.morgen.net:7052 --csr.hosts 'ca-tls.morgen.net'
-````
+```
 
-## (1.9) Register tls members of the network 
+## (1.9) Register TLS members of the network 
 Based on the given network structure we register our network members (peers and orderer) to provide TLS communication between the single nodes.
 
 In a further step we are register all CA bootstrap identities for this network against this TLS CA.
@@ -147,12 +147,11 @@ fabric-ca-client register -d --id.name ca-mars.morgen.net-admin --id.secret ca-m
 ````
 
 ## Terms
-
 - CSR (certificate signing request)
 - IP SANs (IP subject alternative names)
 
 ## Helper
-openssl x509 -noout -text -in 
+- openssl x509 -noout -text -in file.pem
 
 
 
