@@ -7,6 +7,24 @@ Starting from a single organization we need two more organizations. One for the 
 
 To create the crypto artifacts we use fabric-ca. So every organization starts with his own certificate authority (CA).
 
+A central TLS Service is established to provide the TLS certificates for the whole network members.
+
+## Network configuration
+In order to be able to address the network members correctly by it`s name and to avoid some common TLS problems we can make some dns entries in the servers hosts file.
+
+```bash
+# edit local hosts file
+vi /etc/hosts
+
+# add the following domains
+127.0.0.1 ca-tls.morgen.net
+127.0.0.1 ca-orderer.morgen.net
+127.0.0.1 ca-mars.morgen.net
+127.0.0.1 peer0.mars.morgen.net
+127.0.0.1 peer1.mars.morgen.net
+127.0.0.1 orderer.morgen.net
+```
+
 ## Create the root folder
 First, we start with a short project setup. Based on our fabric installation set up, we switch to the fabric folder as our starting point.
 ```bash

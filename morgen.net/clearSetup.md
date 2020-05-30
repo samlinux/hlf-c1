@@ -3,7 +3,15 @@
 Switch to the base folder.
 ```bash
 cd morgen.net
-````
+```
+
+## Stop running CAs
+```bash
+
+docker-compose -f ca-tls.morgen.net/docker-compose.yaml down
+docker-compose -f ca-orderer.morgen.net/docker-compose.yaml down
+docker-compose -f ca-mars.morgen.net/docker-compose.yaml down
+```
 
 ## Remove chaincode container
 ```bash

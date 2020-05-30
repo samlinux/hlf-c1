@@ -1,10 +1,15 @@
 # Set up ca-tls.morgen.net
 
 ## (1.1) Create the base folders
-Frist we switch into the organisation folder and create the base folders, where our CA is living.
+Frist we switch into the organisation folder and create some base folders for the ca-tls.morgen.net organisation. This organisation provides all required TLS certificates for the whole network.
+
 ```bash
 cd ca-tls.morgen.net
+
+# this is the CA base folder
 mkdir -p ca/server/crypto
+
+# this is for the ca admin
 mkdir -p ca/client/crypto
 ```
 
@@ -26,12 +31,11 @@ services:
   ca-tls.morgen.net:
     container_name: ca-tls.morgen.net
     image: hyperledger/fabric-ca:1.4.6
-    command: sh -c 'fabric-ca-server init -b ca-tls.morgen.net-admin:ca-tls.morgen.net-adminpw --port 7052'
+    command: sh -c 'fabric-ca-server init -b ca-tls.morgen.net-admin:${ca-tls.morgen.net-adminpw} --port 7052'
     environment:
       - FABRIC_CA_SERVER_HOME=/tmp/hyperledger/fabric-ca/crypto
-      - FABRIC_CA_SERVER_TLS_ENABLED=true
       - FABRIC_CA_SERVER_CSR_CN=ca-tls.morgen.net
-      - FABRIC_CA_SERVER_CSR_HOSTS=0.0.0.0
+      - FABRIC_CA_SERVER_CSR_HOSTS=ca-tls.morgen.net
       - FABRIC_CA_SERVER_DEBUG=true
     volumes:
       - ./ca/server:/tmp/hyperledger/fabric-ca
@@ -40,10 +44,10 @@ services:
     ports:
       - 7052:7052
 ```
-The set up process of a fabric-ca is basicly divided into two step process. First we have to initialise the CA with the init command and second we have to start the CA with the start command.
-
-The init command does not actually start the server but generates the required metadata if it does not already exist for the server.
-
+The set up process of a fabric-ca is basically divided into three steps. 
+1. We have to initialise the CA with the init command.
+2. We have to modify the fabric-ca-client-config.yaml file to fit our needs.
+3. Lastly we can start the CA with the start command.
 
 ## (1.3) Initialise the CA
 ```bash
@@ -60,7 +64,7 @@ The init command does not actually start the server but generates the required m
 - Bootstraps the CA server administrator, specified by the -b flag parameters <ADMIN_USER> and <ADMIN_PWD>, onto the server. When the CA server is subsequently started, the admin user is registered with the admin attributes provided in the configuration .yaml file registry section. If this CA will be used to register other users with any of those attributes, then the CA admin user needs to possess those attributes. In other words, the registrar must have the hf.Registrar.Roles attributes before it can register another identity with any of those attributes. Therefore, if this CA admin will be used to register the admin identity for an Intermediate CA, then this CA admin must have the hf.IntermediateCA set to true even though this may not be an intermediate CA server. The default settings already include these attributes.
 
 ## (1.4) Modify the fabric-ca-server-config.yaml
-First we have to give the $USER the right to change the config file.
+If it is needed give the $USER the right to modify the config file.
 ```bash
 sudo chown $USER ca/server/crypto/fabric-ca-server-config.yaml
 ```
@@ -69,19 +73,23 @@ The fabric-ca-server-config.yaml ist the main configuration file from the Fabric
 # modify the config file
 vi ca/server/crypto/fabric-ca-server-config.yaml
 
-# change this attribute
-ca.name: ca-tls.morgen.net
+# modify these config parameters
+# tls:
+#   Enable TLS (default: false)
+#   enabled: true
+# ca:
+#   name: ca-tls.morgen.net
 ```
 
 >If you modified any of the values in the CSR block of the configuration yaml file, you need to delete the fabric-ca-server-tls/ca-cert.pem file and the entire fabric-ca-server-tls/msp folder.  These certificates will be re-generated when you start the CA server in the next step.
 
 After this modification we can adjust the docker-compose.yaml file for the final start. We have to change the docker start command from init to start.
 ```bash
-command: sh -c 'fabric-ca-server start -b ca-tls.morgen.net-admin:ca-tls.morgen.net-adminpw --port 7052'
+command: sh -c 'fabric-ca-server start -b ca-tls.morgen.net-admin:${ca-tls.morgen.net-adminpw} --port 7052'
 ```
 
 ## (1.5) Start the CA
-After we have made all the adjustments, we can start the TLS-CA in the background with the following command. 
+After we have made all the adjustments, we can start the TLS CA in the background with the following command. 
 ```bash
 docker-compose up -d
 
@@ -91,52 +99,59 @@ docker-compose ps
 ---------------------------------------------------------------------------------------------
 ca-tls.morgen.net   sh -c fabric-ca-server sta ...   Up      0.0.0.0:7052->7052/tcp, 7054/tcp
 ```
-Now your TLS CA is up and running. The next step is to enroll the admin user for this CA and the registration of all TLS identities for this network.
+Now your TLS CA is up and running. As a next step we can enroll the admin user for this dedicated TLS-CA and do the registration of all TLS identities for this network.
 
-## (1.6) Copy the ca-tls root certificate
+## (1.6) Copy the TLS CA root certificate
 Copy the TLS CA root certificate file ca-cert.pem, that was generated when the TLS CA server was started, to a new file name ca-tls.morgen.net.cert.pem. Notice the file name is changed to ca-tls.morgen.net.cert.pem to make it clear this is the root certificate from the TLS CA. Important: This TLS CA root certificate will need to be available on each client system that will run commands against the TLS CA.
 
 ```bash
 cp ./ca/server/crypto/ca-cert.pem  ./ca/client/crypto/ca-tls.morgen.net.cert.pem
-````
+```
 
-## (1.7) Enroll the ca admin - preparation
-To enroll the root-tls-ca admin, we have to set the following evironment variables.
+## (1.7) Enroll the TLS-CA admin - preparation
+To enroll the TLS CA admin, we have to set the following evironment variables. With these variables we point out where the fabirc-ca-client-home is based and where the tls certificates is located under the fabric-ca-client-home directory.
 
 ```bash
 export FABRIC_CA_CLIENT_HOME=./ca/client
 export FABRIC_CA_CLIENT_TLS_CERTFILES=crypto/ca-tls.morgen.net.cert.pem
-````
+```
 
-## (1.8) Enroll ca-tls.morgen-net-admin
+## (1.8) Enrollment of the ca-tls.morgen-net-admin
+
 ```bash
 fabric-ca-client enroll -d -u https://ca-tls.morgen.net-admin:ca-tls.morgen.net-adminpw@ca-tls.morgen.net:7052 --csr.hosts 'ca-tls.morgen.net'
-````
+```
 
-## (1.9) Register tls members of the network 
+## (1.9) Register TLS members of the network 
 Based on the given network structure we register our network members (peers and orderer) to provide TLS communication between the single nodes.
+
+In a further step we are register all CA bootstrap identities for this network against this TLS CA.
+
 ```bash
-# peer0
+# register network nodes
+## peer0
 fabric-ca-client register -d --id.name peer0.mars.morgen.net --id.secret peer0PW --id.type peer -u https://ca-tls.morgen.net:7052 --csr.hosts 'peer0.mars.morgen.net'
 
-# peer 1
+## peer 1
 fabric-ca-client register -d --id.name peer1.mars.morgen.net --id.secret peer1PW --id.type peer -u https://ca-tls.morgen.net:7052 --csr.hosts 'peer1.mars.morgen.net'
 
-# orderer
+## orderer
 fabric-ca-client register -d --id.name orderer.morgen.net --id.secret ordererPW --id.type orderer -u https://ca-tls.morgen.net:7052 --csr.hosts 'orderer.morgen.net'
 
-# register ca-orderer.morgen.net organization CA bootstrap identity with the TLS-CA
+# register CA bootstrap identiies
+## register ca-orderer.morgen.net organization CA bootstrap identity with the TLS-CA
 fabric-ca-client register -d --id.name ca-orderer.morgen.net-admin --id.secret ca-orderer-adminpw -u https://ca-tls.morgen.net:7052 --csr.hosts 'ca-orderer.morgen.net'
 
-# register ca-mars.morgen.net organization CA bootstrap identity with the TLS-CA
+## register ca-mars.morgen.net organization CA bootstrap identity with the TLS-CA
 fabric-ca-client register -d --id.name ca-mars.morgen.net-admin --id.secret ca-mars-adminpw -u https://ca-tls.morgen.net:7052 --csr.hosts 'ca-mars.morgen.net'
 ````
 
+## Terms
+- CSR (certificate signing request)
+- IP SANs (IP subject alternative names)
 
-IP SANs (IP subject alternative names).
-
-
-openssl x509 -noout -text -in /etc/letsencrypt/live/careorganise.com/fullchain.pem
+## Helper
+- openssl x509 -noout -text -in file.pem
 
 
 
