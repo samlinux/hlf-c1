@@ -10,7 +10,7 @@ services:
     environment:
       - ORDERER_HOME=/tmp/hyperledger/orderer
       - ORDERER_HOST=orderer.morgen.net
-      - ORDERER_GENERAL_LISTENADDRESS=0.0.0.0
+      - ORDERER_GENERAL_LISTENADDRESS=orderer.morgen.net
       - ORDERER_GENERAL_GENESISMETHOD=file
       - ORDERER_GENERAL_GENESISFILE=/tmp/hyperledger/orderer.morgen.net/orderer/genesis.block
       - ORDERER_GENERAL_LOCALMSPID=OrdererMSP
@@ -23,7 +23,7 @@ services:
       - ORDERER_DEBUG_BROADCASTTRACEDIR=data/logs
     volumes:
       - ./ca-orderer.morgen.net/orderer:/tmp/hyperledger/orderer.morgen.net/orderer/
-      # if you want persistent data
+      # comment the next line if you don't want persistent data
       - ./ca-orderer.morgen.net/orderer/production:/var/hyperledger/production
     networks:
       - morgen
@@ -49,19 +49,37 @@ services:
       - CORE_PEER_GOSSIP_ORGLEADER=false
       - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.mars.morgen.net:7051
       - CORE_PEER_GOSSIP_SKIPHANDSHAKE=true
+      - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb0:5984
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=${couchdbUser}
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=${couchdbPw}
     working_dir: /opt/gopath/src/github.com/hyperledger/fabric/mars.morgen.net/peer0
     volumes:
       - /var/run:/host/var/run
       - ./ca-mars.morgen.net/peers/peer0:/tmp/hyperledger/mars.morgen.net/peer0
-      # if you want persistent data
+      # comment the next line if you don't want persistent data
       - ./ca-mars.morgen.net/peers/peer0/production:/var/hyperledger/production
     networks:
       - morgen
     depends_on:
-      - orderer.morgen.net
+      - couchdb0
     ports:
       - 7051:7051
 
+  couchdb0:
+    container_name: couchdb0
+    image: hyperledger/fabric-couchdb:0.4.18
+    # Populate the COUCHDB_USER and COUCHDB_PASSWORD to set an admin user and password
+    # for CouchDB.  This will prevent CouchDB from operating in an "Admin Party" mode.
+    environment:
+        - COUCHDB_USER=${couchdbUser}
+        - COUCHDB_PASSWORD=${couchdbPw}
+    # Comment/Uncomment the port mapping if you want to hide/expose the CouchDB service,
+    # for example map it to utilize Fauxton User Interface in dev environments.
+    ports:
+      - "5984:5984"
+    networks:
+      - morgen
 
   peer1.mars.morgen.net:
     container_name: peer1.mars.morgen.net
@@ -82,19 +100,38 @@ services:
       - CORE_PEER_GOSSIP_ORGLEADER=false
       - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer1.mars.morgen.net:7051
       - CORE_PEER_GOSSIP_SKIPHANDSHAKE=true
+      - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb1:5984
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=${couchdbUser}
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=${couchdbPw}
     working_dir: /opt/gopath/src/github.com/hyperledger/fabric/mars.morgen.net/peer1
     volumes:
       - /var/run:/host/var/run
       - ./ca-mars.morgen.net/peers/peer1:/tmp/hyperledger/mars.morgen.net/peer1
-      # if you want persistent data
+      # comment the next line if you don't want persistent data
       - ./ca-mars.morgen.net/peers/peer1/production:/var/hyperledger/production
-    networks:
-      - morgen
     depends_on:
-      - orderer.morgen.net
+      - couchdb1
     ports:
       - 8051:7051
+    networks:
+      - morgen
   
+  couchdb1:
+    container_name: couchdb1
+    image: hyperledger/fabric-couchdb:0.4.18
+    # Populate the COUCHDB_USER and COUCHDB_PASSWORD to set an admin user and password
+    # for CouchDB.  This will prevent CouchDB from operating in an "Admin Party" mode.
+    environment:
+      - COUCHDB_USER=${couchdbUser}
+      - COUCHDB_PASSWORD=${couchdbPw}
+    # Comment/Uncomment the port mapping if you want to hide/expose the CouchDB service,
+    # for example map it to utilize Fauxton User Interface in dev environments. 
+    ports:
+      - "6984:5984"
+    networks:
+      - morgen
+
   cli-mars.morgen.net:
     container_name: cli-mars.morgen.net
     image: hyperledger/fabric-tools:1.4.6
