@@ -78,6 +78,7 @@ Now we are ready to set up each organization step by step. We will do that in th
 1. [ca-tls.morgen.net](./ca-tls.morgen.net/index.md)
 2. [ca-orderer.morgen.net](./ca-orderer.morgen.net/index.md)
 3. [ca-mars.morgen.net](./ca-mars.morgen.net/index.md)
+4. [start the network](./index2.md)
 
 ## How to reset the network
 1. [Instructions to clear the network](./clearSetup.md)
