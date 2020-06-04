@@ -132,7 +132,7 @@ In a further step we are register all CA bootstrap identities for this network a
 ## peer0
 fabric-ca-client register -d --id.name peer0.mars.morgen.net --id.secret peer0PW --id.type peer -u https://ca-tls.morgen.net:7052 --csr.hosts 'peer0.mars.morgen.net'
 
-## peer 1
+## peer1
 fabric-ca-client register -d --id.name peer1.mars.morgen.net --id.secret peer1PW --id.type peer -u https://ca-tls.morgen.net:7052 --csr.hosts 'peer1.mars.morgen.net'
 
 ## orderer

@@ -65,7 +65,7 @@ We start the network in the background.
 
 ```bash 
 # start the network
-docker-compose up -d
+docker-compose -f docker-compose-couch.yaml up -d
 
 # watch logs
 docker-compose logs -f

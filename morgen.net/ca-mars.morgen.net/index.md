@@ -153,7 +153,7 @@ Let's go and register the members.
 fabric-ca-client register -d --id.name peer0.mars.morgen.net --id.secret peer0PW --id.type peer -u https://ca-mars.morgen.net:7054 --csr.hosts 'peer0.mars.morgen.net'
 
 # peer1
-fabric-ca-client register -d --id.name peer1.mars.morgen.net --id.secret peer1PW --id.type peer -u https://ca-mars.morgen.net:7054 --csr.hosts 'peer1.mars.morgen.net'
+fabric-ca-client register -d --id.name peer1.mars.morgen.net --id.secret peer0PW --id.type peer -u https://ca-mars.morgen.net:7054 --csr.hosts 'peer1.mars.morgen.net'
 
 # an organization admin
 fabric-ca-client register -d --id.name admin-mars.morgen.net --id.secret marsAdminPW --id.type admin -u https://ca-mars.morgen.net:7054 --csr.hosts '*.mars.morgen.net'
@@ -266,8 +266,8 @@ cp ./ca/server/crypto/ca-cert.pem ./peers/peer1/assets/ca/mars.morgen.net-ca-cer
 cp ../ca-tls.morgen.net/ca/client/crypto/ca-tls.morgen.net.cert.pem ./peers/peer1/assets/tls-ca/
 ```
 
-#### (3.2.4) Enroll peer0
-Now we can enroll peer0 from the ca-mars.morgen.net CA.
+#### (3.2.4) Enroll peer1
+Now we can enroll peer1 from the ca-mars.morgen.net CA.
 
 ```bash
 export FABRIC_CA_CLIENT_MSPDIR=msp
