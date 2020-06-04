@@ -48,7 +48,6 @@ sudo rm -R ca-mars.morgen.net/peers
 ## (3) ca-mars.morgen.net 
 ### start with the create.sh script
 
---> has to be documented
 # (4) create genesis block
 configtxgen -profile OneOrgOrdererGenesis -channelID orderersyschannel -outputBlock ./ca-orderer.morgen.net/orderer/genesis.block
 
@@ -65,7 +64,7 @@ docker-compose logs -f
 # (7) we enter the mars-cli on peer0
 docker exec -it cli-mars.morgen.net bash 
 
-# (7.1) these are the needed environment vars (for peer0 these are alredy set in the docker-compose.file)
+# (7.1) these are the needed environment vars (for peer0 these are already set in the docker-compose.file)
 export CORE_PEER_LOCALMSPID="marsMSP"
 export CORE_PEER_MSPCONFIGPATH="/tmp/hyperledger/mars.morgen.net/admin/msp"
 export CORE_PEER_TLS_ROOTCERT_FILE="/tmp/hyperledger/mars.morgen.net/peers/peer0/tls-msp/tlscacerts/tls-ca-tls-morgen-net-7052.pem"
