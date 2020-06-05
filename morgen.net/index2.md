@@ -239,6 +239,11 @@ peer chaincode query -n sacc -c '{"Args":["query","msg"]}' -C channel1 --tls --c
 hello blockchain
 ``` 
 
+To set a new value to the key we can use the invoke command.
+```bash  
+peer chaincode invoke -n sacc -c '{"Args":["set", "msg","hello morgen.net"]}' -C channel1  --tls --cafile /tmp/hyperledger/mars.morgen.net/peers/peer0/tls-msp/tlscacerts/tls-ca-tls-morgen-net-7052.pem
+```
+
 Now we are ready on peer0. Let's switch to peer1 to sync that peer. For that we switch to peer1 again by chaning the corresponding environment variables.
 ```bash  
 export CORE_PEER_TLS_ROOTCERT_FILE="/tmp/hyperledger/mars.morgen.net/peers/peer1/tls-msp/tlscacerts/tls-ca-tls-morgen-net-7052.pem"
