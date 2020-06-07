@@ -2,7 +2,7 @@
 
 ## Course overview
 
-## Installation
+## Base Fabric Installation
 - [Prepare and set up the host](./setup/index.md)
 
 ## Install the morgen.net network

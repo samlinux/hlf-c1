@@ -9,7 +9,4 @@ extra_css:
   - css/format.css    
 nav:
   - Home: index.md
-  - Installation: setup/index.md
-  - The morgen.net: morgen.net/index.md
-  - Nodejs SDK: nodeSdk/index.md
   - Release Notes: about/release-notes.md
