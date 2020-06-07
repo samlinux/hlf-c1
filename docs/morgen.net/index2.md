@@ -65,7 +65,7 @@ We start the network in the background.
 
 ```bash 
 # start the network
-docker-compose up -d
+docker-compose -f docker-compose-couch.yaml up -d
 
 # watch logs
 docker-compose logs -f
@@ -238,6 +238,11 @@ peer chaincode query -n sacc -c '{"Args":["query","msg"]}' -C channel1 --tls --c
 # you should see
 hello blockchain
 ``` 
+
+To set a new value to the key we can use the invoke command.
+```bash  
+peer chaincode invoke -n sacc -c '{"Args":["set", "msg","hello morgen.net"]}' -C channel1  --tls --cafile /tmp/hyperledger/mars.morgen.net/peers/peer0/tls-msp/tlscacerts/tls-ca-tls-morgen-net-7052.pem
+```
 
 Now we are ready on peer0. Let's switch to peer1 to sync that peer. For that we switch to peer1 again by chaning the corresponding environment variables.
 ```bash  
