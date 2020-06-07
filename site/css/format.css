@@ -1,0 +1,11 @@
+section a {
+    color:green;
+} 
+
+section a:hover {
+    color:green;
+}
+
+section a:visited {
+    color:green;
+}

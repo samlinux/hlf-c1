@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  
+  
+  <link rel="shortcut icon" href="../../img/favicon.ico">
+  <title>Set up ca-tls.morgen.net - Hyperledger Fabric Study Guide</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700" />
+
+  <link rel="stylesheet" href="../../css/theme.css" />
+  <link rel="stylesheet" href="../../css/theme_extra.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" />
+  <link href="../../css/format.css" rel="stylesheet" />
+  
+  <script>
+    // Current page data
+    var mkdocs_page_name = "Set up ca-tls.morgen.net";
+    var mkdocs_page_input_path = "morgen.net/ca-tls.morgen.net/index.md";
+    var mkdocs_page_url = null;
+  </script>
+  
+  <script src="../../js/jquery-2.1.1.min.js" defer></script>
+  <script src="../../js/modernizr-2.8.3.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script> 
+  
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+        <a href="../.." class="icon icon-home"> Hyperledger Fabric Study Guide</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../..">Home</a>
+                    </li>
+                </ul>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../setup/">Installation</a>
+                    </li>
+                </ul>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../">The morgen.net</a>
+                    </li>
+                </ul>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../nodeSdk/">Nodejs SDK</a>
+                    </li>
+                </ul>
+                <ul>
+                    <li class="toctree-l1"><a class="" href="../../about/release-notes.md">Release Notes</a>
+                    </li>
+                </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../..">Hyperledger Fabric Study Guide</a>
+      </nav>
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../..">Docs</a> &raquo;</li>
+    
+      
+    
+    <li>Set up ca-tls.morgen.net</li>
+    <li class="wy-breadcrumbs-aside">
+      
+    </li>
+  </ul>
+  
+  <hr/>
+</div>
+          <div role="main">
+            <div class="section">
+              
+                <h1 id="set-up-ca-tlsmorgennet">Set up ca-tls.morgen.net</h1>
+<h2 id="11-create-the-base-folders">(1.1) Create the base folders</h2>
+<p>Frist we switch into the organisation folder and create some base folders for the ca-tls.morgen.net organisation. This organisation provides all required TLS certificates for the whole network.</p>
+<pre><code class="bash">cd ca-tls.morgen.net
+
+# this is the CA base folder
+mkdir -p ca/server/crypto
+
+# this is for the ca admin
+mkdir -p ca/client/crypto
+</code></pre>
+
+<h2 id="12-create-docker-compose-file">(1.2) Create docker-compose file</h2>
+<p>We create the following docker.compose.yaml file.</p>
+<pre><code class="bash"># create a new file
+vi docker-compose.yaml 
+
+# add the following content
+version: &quot;3.3&quot;
+
+networks:
+  morgen:
+
+services:
+  ca-tls.morgen.net:
+    container_name: ca-tls.morgen.net
+    image: hyperledger/fabric-ca:1.4.6
+    command: sh -c 'fabric-ca-server init -b ca-tls.morgen.net-admin:${ca-tls.morgen.net-adminpw} --port 7052'
+    environment:
+      - FABRIC_CA_SERVER_HOME=/tmp/hyperledger/fabric-ca/crypto
+      - FABRIC_CA_SERVER_CSR_CN=ca-tls.morgen.net
+      - FABRIC_CA_SERVER_CSR_HOSTS=ca-tls.morgen.net
+      - FABRIC_CA_SERVER_DEBUG=true
+    volumes:
+      - ./ca/server:/tmp/hyperledger/fabric-ca
+    networks:
+      - morgen
+    ports:
+      - 7052:7052
+</code></pre>
+
+<p>The set up process of a fabric-ca is basically divided into three steps. 
+1. We have to initialise the CA with the init command.
+2. We have to modify the fabric-ca-client-config.yaml file to fit our needs.
+3. Lastly we can start the CA with the start command.</p>
+<h2 id="13-initialise-the-ca">(1.3) Initialise the CA</h2>
+<pre><code class="bash">docker-compose up
+</code></pre>
+
+<h3 id="131-what-does-the-ca-server-init-command-do">(1.3.1) What does the CA server init command do?</h3>
+<p>The init command does not actually start the server but generates the required metadata if it does not already exist for the server:</p>
+<ul>
+<li>Sets the default the CA Home directory (referred to as FABRIC_CA_HOME in these instructions) to where the fabric-ca-server init command is run.</li>
+<li>Generates the default configuration file fabric-ca-server-config.yaml that is used as a template for your server configuration in the FABRIC_CA_HOME directory. We refer to this file throughout these instructions as the “configuration .yaml” file.</li>
+<li>Creates the TLS CA root signed certificate file ca-cert.pem, if it does not already exist in the CA Home directory. This is the self-signed root certificate, meaning it is generated and signed by the TLS CA itself and does not come from another source. This certificate is the public key that must be shared with all clients that want to transact with any node in the organization. When any client or node submits a transaction to another node, it must include this certificate as part of the transaction.</li>
+<li>Generates the CA server private key and stores it in the FABRIC_CA_HOME directory under /msp/keystore.</li>
+<li>Initializes a default SQLite database for the server although you can modify the database setting in the configuration .yaml file to use the supported database of your choice. Every time the server is started, it loads the data from this database. If you later switch to a different database such as PostgreSQL or MySQL, and the identities defined in the registry.identites section of the configuration .yaml file don’t exist in that database, they will be registered.</li>
+<li>Bootstraps the CA server administrator, specified by the -b flag parameters <ADMIN_USER> and <ADMIN_PWD>, onto the server. When the CA server is subsequently started, the admin user is registered with the admin attributes provided in the configuration .yaml file registry section. If this CA will be used to register other users with any of those attributes, then the CA admin user needs to possess those attributes. In other words, the registrar must have the hf.Registrar.Roles attributes before it can register another identity with any of those attributes. Therefore, if this CA admin will be used to register the admin identity for an Intermediate CA, then this CA admin must have the hf.IntermediateCA set to true even though this may not be an intermediate CA server. The default settings already include these attributes.</li>
+</ul>
+<h2 id="14-modify-the-fabric-ca-server-configyaml">(1.4) Modify the fabric-ca-server-config.yaml</h2>
+<p>If it is needed give the $USER the right to modify the config file.</p>
+<pre><code class="bash">sudo chown $USER ca/server/crypto/fabric-ca-server-config.yaml
+</code></pre>
+
+<p>The fabric-ca-server-config.yaml ist the main configuration file from the Fabric-CA Server. We have to pay particular attention to some points here. But for now we modify the ca.name attribute to ca-tls.morgen.net.</p>
+<pre><code class="bash"># modify the config file
+vi ca/server/crypto/fabric-ca-server-config.yaml
+
+# modify these config parameters
+# tls:
+#   Enable TLS (default: false)
+#   enabled: true
+# ca:
+#   name: ca-tls.morgen.net
+</code></pre>
+
+<blockquote>
+<p>If you modified any of the values in the CSR block of the configuration yaml file, you need to delete the fabric-ca-server-tls/ca-cert.pem file and the entire fabric-ca-server-tls/msp folder.  These certificates will be re-generated when you start the CA server in the next step.</p>
+</blockquote>
+<p>After this modification we can adjust the docker-compose.yaml file for the final start. We have to change the docker start command from init to start.</p>
+<pre><code class="bash">command: sh -c 'fabric-ca-server start -b ca-tls.morgen.net-admin:${ca-tls.morgen.net-adminpw} --port 7052'
+</code></pre>
+
+<h2 id="15-start-the-ca">(1.5) Start the CA</h2>
+<p>After we have made all the adjustments, we can start the TLS CA in the background with the following command. </p>
+<pre><code class="bash">docker-compose up -d
+
+# check the running container
+docker-compose ps
+      Name                     Command               State                Ports
+---------------------------------------------------------------------------------------------
+ca-tls.morgen.net   sh -c fabric-ca-server sta ...   Up      0.0.0.0:7052-&gt;7052/tcp, 7054/tcp
+</code></pre>
+
+<p>Now your TLS CA is up and running. As a next step we can enroll the admin user for this dedicated TLS-CA and do the registration of all TLS identities for this network.</p>
+<h2 id="16-copy-the-tls-ca-root-certificate">(1.6) Copy the TLS CA root certificate</h2>
+<p>Copy the TLS CA root certificate file ca-cert.pem, that was generated when the TLS CA server was started, to a new file name ca-tls.morgen.net.cert.pem. Notice the file name is changed to ca-tls.morgen.net.cert.pem to make it clear this is the root certificate from the TLS CA. Important: This TLS CA root certificate will need to be available on each client system that will run commands against the TLS CA.</p>
+<pre><code class="bash">cp ./ca/server/crypto/ca-cert.pem  ./ca/client/crypto/ca-tls.morgen.net.cert.pem
+</code></pre>
+
+<h2 id="17-enroll-the-tls-ca-admin-preparation">(1.7) Enroll the TLS-CA admin - preparation</h2>
+<p>To enroll the TLS CA admin, we have to set the following evironment variables. With these variables we point out where the fabirc-ca-client-home is based and where the tls certificates is located under the fabric-ca-client-home directory.</p>
+<pre><code class="bash">export FABRIC_CA_CLIENT_HOME=./ca/client
+export FABRIC_CA_CLIENT_TLS_CERTFILES=crypto/ca-tls.morgen.net.cert.pem
+</code></pre>
+
+<h2 id="18-enrollment-of-the-ca-tlsmorgen-net-admin">(1.8) Enrollment of the ca-tls.morgen-net-admin</h2>
+<pre><code class="bash">fabric-ca-client enroll -d -u https://ca-tls.morgen.net-admin:ca-tls.morgen.net-adminpw@ca-tls.morgen.net:7052 --csr.hosts 'ca-tls.morgen.net'
+</code></pre>
+
+<h2 id="19-register-tls-members-of-the-network">(1.9) Register TLS members of the network</h2>
+<p>Based on the given network structure we register our network members (peers and orderer) to provide TLS communication between the single nodes.</p>
+<p>In a further step we are register all CA bootstrap identities for this network against this TLS CA.</p>
+<p>```bash</p>
+<h1 id="register-network-nodes">register network nodes</h1>
+<h2 id="peer0">peer0</h2>
+<p>fabric-ca-client register -d --id.name peer0.mars.morgen.net --id.secret peer0PW --id.type peer -u https://ca-tls.morgen.net:7052 --csr.hosts 'peer0.mars.morgen.net'</p>
+<h2 id="peer-1">peer 1</h2>
+<p>fabric-ca-client register -d --id.name peer1.mars.morgen.net --id.secret peer1PW --id.type peer -u https://ca-tls.morgen.net:7052 --csr.hosts 'peer1.mars.morgen.net'</p>
+<h2 id="orderer">orderer</h2>
+<p>fabric-ca-client register -d --id.name orderer.morgen.net --id.secret ordererPW --id.type orderer -u https://ca-tls.morgen.net:7052 --csr.hosts 'orderer.morgen.net'</p>
+<h1 id="register-ca-bootstrap-identiies">register CA bootstrap identiies</h1>
+<h2 id="register-ca-orderermorgennet-organization-ca-bootstrap-identity-with-the-tls-ca">register ca-orderer.morgen.net organization CA bootstrap identity with the TLS-CA</h2>
+<p>fabric-ca-client register -d --id.name ca-orderer.morgen.net-admin --id.secret ca-orderer-adminpw -u https://ca-tls.morgen.net:7052 --csr.hosts 'ca-orderer.morgen.net'</p>
+<h2 id="register-ca-marsmorgennet-organization-ca-bootstrap-identity-with-the-tls-ca">register ca-mars.morgen.net organization CA bootstrap identity with the TLS-CA</h2>
+<p>fabric-ca-client register -d --id.name ca-mars.morgen.net-admin --id.secret ca-mars-adminpw -u https://ca-tls.morgen.net:7052 --csr.hosts 'ca-mars.morgen.net'
+````</p>
+<h2 id="terms">Terms</h2>
+<ul>
+<li>CSR (certificate signing request)</li>
+<li>IP SANs (IP subject alternative names)</li>
+</ul>
+<h2 id="helper">Helper</h2>
+<ul>
+<li>openssl x509 -noout -text -in file.pem</li>
+</ul>
+              
+            </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+    
+      <p>published 2020 <a href="https://twitter.com/samlinux">Roland Bole</a>.</p>
+    
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+      
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      
+      
+      
+    </span>
+</div>
+    <script>var base_url = '../..';</script>
+    <script src="../../js/theme.js" defer></script>
+      <script src="../../search/main.js" defer></script>
+    <script defer>
+        window.onload = function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        };
+    </script>
+
+</body>
+</html>

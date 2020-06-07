@@ -1,0 +1,15 @@
+site_name: Hyperledger Fabric Study Guide
+dev_addr: 0.0.0.0:8000
+theme:
+    name: readthedocs
+    collapse_by_default: true
+    highlightjs: true
+copyright: published 2020 <a href="https://twitter.com/samlinux">Roland Bole</a>.
+extra_css:
+  - css/format.css    
+nav:
+  - Home: index.md
+  - Installation: setup/index.md
+  - The morgen.net: morgen.net/index.md
+  - Nodejs SDK: nodeSdk/index.md
+  - Release Notes: about/release-notes.md

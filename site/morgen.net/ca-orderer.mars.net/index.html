@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  
+  
+  <link rel="shortcut icon" href="../../img/favicon.ico">
+  <title>Set up ca-orderer.morgen.net - Hyperledger Fabric Study Guide</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700" />
+
+  <link rel="stylesheet" href="../../css/theme.css" />
+  <link rel="stylesheet" href="../../css/theme_extra.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" />
+  <link href="../../css/format.css" rel="stylesheet" />
+  
+  <script>
+    // Current page data
+    var mkdocs_page_name = "Set up ca-orderer.morgen.net";
+    var mkdocs_page_input_path = "morgen.net/ca-orderer.mars.net/index.md";
+    var mkdocs_page_url = null;
+  </script>
+  
+  <script src="../../js/jquery-2.1.1.min.js" defer></script>
+  <script src="../../js/modernizr-2.8.3.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script> 
+  
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+        <a href="../.." class="icon icon-home"> Hyperledger Fabric Study Guide</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../..">Home</a>
+                    </li>
+                </ul>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../setup/">Installation</a>
+                    </li>
+                </ul>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../">The morgen.net</a>
+                    </li>
+                </ul>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../nodeSdk/">Nodejs SDK</a>
+                    </li>
+                </ul>
+                <ul>
+                    <li class="toctree-l1"><a class="" href="../../about/release-notes.md">Release Notes</a>
+                    </li>
+                </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../..">Hyperledger Fabric Study Guide</a>
+      </nav>
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../..">Docs</a> &raquo;</li>
+    
+      
+    
+    <li>Set up ca-orderer.morgen.net</li>
+    <li class="wy-breadcrumbs-aside">
+      
+    </li>
+  </ul>
+  
+  <hr/>
+</div>
+          <div role="main">
+            <div class="section">
+              
+                <h1 id="set-up-ca-orderermorgennet">Set up ca-orderer.morgen.net</h1>
+<p>The first organization we are going to set up is the orderer organization. The set up process can be divided into following main steps:</p>
+<ol>
+<li>basic preparation (including TLS certificate for the CA bootstrap identity, docker-compose set up and CA set up process)</li>
+<li>the creation of the CA admin </li>
+<li>the enrollment of the organisation members</li>
+</ol>
+<h1 id="1-basic-preparation">(1) Basic preparation</h1>
+<h2 id="11-create-the-base-folders">(1.1) Create the base folders</h2>
+<p>Frist we switch into the organisation folder and create the base folders.</p>
+<pre><code class="bash">cd ca-orderer.morgen.net
+# the server base folder
+mkdir -p ca/server
+
+# the ca client folder for the admin and the tls-cert from the central tls-service
+mkdir -p ca/client/{admin,tls-admin}
+</code></pre>
+
+<p>As a next step we are going the enroll the TLS certificate for the CAs bootstrap admin identity. This identity we have already registered in the set up process from the ca-tls.morgen.net organisation.</p>
+<p>For this we have to copy the main TLS-CA cert to the both admin directories.</p>
+<pre><code class="bash"># copy ca-tls cert for bootstrap ca identity
+cp ../ca-tls.morgen.net/ca/client/crypto/ca-tls.morgen.net.cert.pem ca/client/tls-admin/
+
+# copy ca-tls cert for admin ca admin identity
+cp ../ca-tls.morgen.net/ca/client/crypto/ca-tls.morgen.net.cert.pem ca/client/admin/
+</code></pre>
+
+<p>Now we can enroll the TLS identity for the organizations admin.</p>
+<pre><code class="bash"># set the needed environment vars
+export FABRIC_CA_CLIENT_HOME=./ca/client/tls-admin
+export FABRIC_CA_CLIENT_TLS_CERTFILES=./ca-tls.morgen.net.cert.pem
+
+# enroll the admin
+fabric-ca-client enroll -d -u https://ca-orderer.morgen.net-admin:ca-orderer-adminpw@ca-tls.morgen.net:7052 --enrollment.profile tls --csr.hosts 'ca-orderer.morgen.net'
+
+# rename admins private key for later CA configuration
+mv ca/client/tls-admin/msp/keystore/*_sk ca/client/tls-admin/msp/keystore/key.pem
+</code></pre>
+
+<blockquote>
+<p><strong>Important:</strong> The organization CA TLS signed certificate is generated under ca/client/admin/msp/signcert and the private key is available under ca/client/admin/msp/keystore.<br><br><strong>When you deploy the organization CA you will need to point to the location of these two files in the tls section of the CA configuration .yaml file.</strong> <br><br>For ease of reference, you can rename the file in the keystore folder to key.pem.</p>
+</blockquote>
+<h2 id="12-create-docker-compose-file">(1.2) Create docker-compose file</h2>
+<p>We create the following docker.compose.yaml file.</p>
+<pre><code class="bash"># create a new file
+vi docker-compose.yaml 
+
+# add the following content
+version: &quot;3.3&quot;
+
+networks:
+  morgen:
+
+services:
+  ca-orderer.morgen.net:
+    container_name: ca-orderer.morgen.net
+    image: hyperledger/fabric-ca:1.4.4
+    command: sh -c 'fabric-ca-server init -b ca-orderer.morgen.net-admin:${CaOrdererAminPw} --port 7053'
+    environment:
+      - FABRIC_CA_SERVER_HOME=/tmp/hyperledger/fabric-ca/crypto
+      - FABRIC_CA_SERVER_CSR_CN=ca-orderer.morgen.net
+      - FABRIC_CA_SERVER_CSR_HOSTS=ca-orderer.morgen.net
+      - FABRIC_CA_SERVER_DEBUG=true
+    volumes:
+      - ./ca/server:/tmp/hyperledger/fabric-ca
+      - ./ca/client:/tmp/hyperledger/fabric-ca-client
+    networks:
+      - morgen
+    ports:
+      - 7053:7053
+</code></pre>
+
+<p>To hide the bootstrap identity password we can use the docker-compose .env file functionality. As you can see in the command line above we use a docker-compose environment variable ${CaOrdererAminPw} for this. In order to get this working we need to create a .env file beside the docker-compose.yaml file.</p>
+<pre><code class="bash"># create the file
+vi .env
+
+# add the password in the format: var=value
+CaOrdererAminPw=ca-orderer-adminpw
+</code></pre>
+
+<blockquote>
+<p><strong>One note at this point</strong>: It is not allowed to use signs like spaces ( ), hyphen
+(-) or underlines (_) in the variable name.</p>
+</blockquote>
+<h2 id="13-initialise-the-ca">(1.3) Initialise the CA</h2>
+<p>To initialise the CA we start the CA with the following command. </p>
+<pre><code class="bash">docker-compose up
+</code></pre>
+
+<blockquote>
+<p>Note, we use the fabric-ca <strong>init</strong> command in docker-compose file. So to start the server finally we have to change the command from init to start.</p>
+</blockquote>
+<p>The set up process is basically the same as for ca-tls.morgen.net. The only thing we have to do is modify the fabric-ca-server-config.yaml. After you have done this, you can modify the docker-compose.yaml file and replace the init command with start to start the CA finally.</p>
+<pre><code class="bash"># ------------------------------------------
+# modify fabric-ca-server-config.yaml file
+# ------------------------------------------
+vi ca/server/crypto/fabric-ca-server-config.yaml
+
+# tls:
+#   # Enable TLS (default: false)
+#   enabled: true
+#   # TLS for the server's listening port
+#   certfile: /tmp/hyperledger/fabric-ca-client/tls-admin/msp/signcerts/cert.pem
+#   keyfile: /tmp/hyperledger/fabric-ca-client/tls-admin/msp/keystore/key.pem
+
+# ca:
+#   # Name of this CA
+#   name: ca-orderer.morgen.net
+</code></pre>
+
+<pre><code class="bash"># --------------------------------
+# modify docker-compose.yaml file
+# --------------------------------
+vi docker-compose.yaml
+
+# change the command parameter
+command: sh -c 'fabric-ca-server start -b ca-orderer.morgen.net-admin:${CaOrdererAminPw} --port 7053'
+</code></pre>
+
+<h2 id="14-start-the-ca">(1.4) Start the CA</h2>
+<p>After following the previous steps, we can start the orderer organisation CA.</p>
+<pre><code class="bash"># start the CA in the background
+docker-compose up -d
+
+# check it the CA is running
+docker-compose ps
+
+# check the logs
+docker-compose logs
+</code></pre>
+
+<h2 id="15-enroll-the-ca-orderermorgennet-admin-preparation">(1.5) Enroll the ca-orderer.morgen.net-admin - preparation</h2>
+<p>First we have to set two enviroments variables.</p>
+<pre><code class="bash">export FABRIC_CA_CLIENT_HOME=./ca/client/admin
+export FABRIC_CA_CLIENT_TLS_CERTFILES=ca-tls.morgen.net.cert.pem
+</code></pre>
+
+<h2 id="16-enroll-the-ca-orderermorgen-net-admin-enrollement">(1.6) Enroll the ca-orderer.morgen-net-admin - enrollement</h2>
+<p>After the environment variables are set we can enroll the ca-admin user for this particular organisation.</p>
+<pre><code class="bash">fabric-ca-client enroll -d -u https://ca-orderer.morgen.net-admin:ca-orderer-adminpw@ca-orderer.morgen.net:7053  --csr.hosts 'ca-orderer.morgen.net'
+</code></pre>
+
+<p>With these steps we have finally finished the set up process of the ca-orderer.morgen.net CA. Now the admin of this CA can start to interact with this CA to register members for this organization.</p>
+<h2 id="17-register-the-members-of-the-network">(1.7) Register the members of the network</h2>
+<p>As a next step we register the organization members for a later usage. In this organization we are going to use two organization members:</p>
+<ol>
+<li>one orderer node (we use the solo orderer system) and</li>
+<li>one admin user for this orderer</li>
+</ol>
+<p>The steps to enroll an identity are basically always the same:</p>
+<ol>
+<li>We register an identity with the corresponding CA.</li>
+<li>We enroll this identity.</li>
+<li>If needed, we enroll the TLS identity with the corresponding TLS-CA. Note in our case we have already registered the orderer node TLS identity in previous steps.</li>
+</ol>
+<p>Let's go and register the members.</p>
+<pre><code class="bash"># orderer node
+fabric-ca-client register -d --id.name orderer.morgen.net --id.secret ordererpw --id.type orderer -u https://ca-orderer.morgen.net:7053 --csr.hosts 'orderer.morgen.net'
+
+# admin for the orderer node
+fabric-ca-client register -d --id.name admin-orderer.morgen.net --id.secret org0adminpw --id.type admin --id.attrs &quot;hf.Registrar.Roles=client,hf.Registrar.Attributes=*,hf.Revoker=true,hf.GenCRL=true,admin=true:ecert,abac.init=true:ecert&quot; -u https://ca-orderer.morgen.net:7053 --csr.hosts 'orderer.morgen.net'
+</code></pre>
+
+<h1 id="2-creation-of-the-orderer-admin">(2) Creation of the Orderer admin</h1>
+<p>Now we can set up the admin user for the orderer node. The admin user is required to administrate this orderer node.</p>
+<h2 id="21-create-base-folder">(2.1) Create base folder</h2>
+<p>We create an base folder for the orderer admin user.</p>
+<pre><code class="bash">mkdir  -p admin/ca
+</code></pre>
+
+<h2 id="22-copy-tls-cert">(2.2) Copy TLS cert</h2>
+<p>For TLS communication we copy the ca-tls.morgen.net.cert.pem file to the admin folder.</p>
+<pre><code class="bash">cp ../ca-tls.morgen.net/ca/client/crypto/ca-tls.morgen.net.cert.pem admin/ca
+</code></pre>
+
+<h2 id="23-enroll-the-admin">(2.3) Enroll the admin</h2>
+<p>To enroll the orderer admin we have to do two steps</p>
+<ol>
+<li>we need to set some environment variables</li>
+<li>we enroll the admin</li>
+</ol>
+<h3 id="231-set-environment-variables">(2.3.1) Set environment variables</h3>
+<pre><code class="bash"># set needed environment vars
+export FABRIC_CA_CLIENT_HOME=./admin
+export FABRIC_CA_CLIENT_TLS_CERTFILES=ca/ca-tls.morgen.net.cert.pem
+export FABRIC_CA_CLIENT_MSPDIR=msp
+</code></pre>
+
+<h2 id="232-enrollment-of-the-admin">(2.3.2) Enrollment of the admin</h2>
+<p>Enroll the orderer admin user.</p>
+<pre><code class="bash">fabric-ca-client enroll -d -u https://admin-orderer.morgen.net:org0adminpw@ca-orderer.morgen.net:7053 --csr.hosts 'orderer.morgen.net'
+</code></pre>
+
+<h1 id="3-setup-the-orderer">(3) Setup the orderer</h1>
+<h2 id="31-preparetion">(3.1) Preparetion</h2>
+<p>We create an assets folder for the orderer. This folder is used later at runtime and will mountend into the orderer container.</p>
+<pre><code class="bash">mkdir -p orderer/assets/ca
+mkdir orderer/assets/ca-tls.morgen.net
+</code></pre>
+
+<h2 id="32-copy-needed-ca-certs">(3.2) Copy needed ca-certs</h2>
+<p>We copy two certificates to the orderers assets folder. 
+1. the ca-cert.pem from the orderer organization CA and 
+2. the ca-cert.pem from the TLS CA.</p>
+<pre><code class="bash"># ca-orderer ca-cert
+cp ./ca/server/crypto/ca-cert.pem ./orderer/assets/ca/orderer.morgen.net-ca-cert.pem
+
+# ca-tls ca-cert
+cp ../ca-tls.morgen.net/ca/server/crypto/ca-cert.pem ./orderer/assets/ca-tls.morgen.net/ca-tls.morgen.net.cert.pem
+
+#cp ../ca-tls.morgen.net/ca/server/crypto/ca-cert.pem ./admin/ca-tls.morgen.net.cert.pem
+</code></pre>
+
+<h2 id="33-enroll-the-orderer">(3.3) Enroll the orderer</h2>
+<h3 id="331-set-environment-variables">(3.3.1) Set environment variables</h3>
+<p>We set two environment variables for the enrollment of the orderer.</p>
+<pre><code class="bash"># set the required environment vars
+export FABRIC_CA_CLIENT_HOME=./orderer
+export FABRIC_CA_CLIENT_TLS_CERTFILES=./assets/ca-tls.morgen.net/ca-tls.morgen.net.cert.pem
+</code></pre>
+
+<h3 id="332-enroll-the-orderer">(3.3.2) Enroll the orderer</h3>
+<p>Since we have already registered the orderer as an identity, we can now enroll it (ca-orderer.morgen.net).</p>
+<pre><code class="bash">fabric-ca-client enroll -d -u https://orderer.morgen.net:ordererpw@ca-orderer.morgen.net:7053 --csr.hosts 'orderer.morgen.net'
+</code></pre>
+
+<h3 id="333-enroll-the-orderer-tls">(3.3.3) Enroll the orderer TLS</h3>
+<p>Since we have already registered the TLS identity for the orderer, we can now enroll it (ca-tls.morgen.net).</p>
+<pre><code class="bash"># set the required environment vars
+export FABRIC_CA_CLIENT_MSPDIR=tls-msp
+export FABRIC_CA_CLIENT_TLS_CERTFILES=./assets/ca-tls.morgen.net/ca-tls.morgen.net.cert.pem
+
+# enroll the tls profile of the orderer
+fabric-ca-client enroll -d -u https://orderer.morgen.net:ordererPW@ca-tls.morgen.net:7052 --enrollment.profile tls --csr.hosts 'orderer.morgen.net'
+</code></pre>
+
+<h3 id="334-rename-the-orderers-private-key">(3.3.4) Rename the orderers private key</h3>
+<p>We can rename the private key of the orderer for a possible later useage.</p>
+<pre><code class="bash">mv ./orderer/tls-msp/keystore/*_sk ./orderer/tls-msp/keystore/key.pem
+</code></pre>
+
+<h1 id="4-setup-the-msp">(4) Setup the MSP</h1>
+<p>The orderer as any other part of a fabric-network need a Membership Service Provider (MSP). We create that as a last step in the set up process of the orderer. In this steps we are going to copy the created certifcates to the right place.</p>
+<h2 id="41-create-base-folder-structure">(4.1) Create base folder structure</h2>
+<p>The MSP has a fixed folder structure which we can create with the following command.</p>
+<pre><code class="bash">mkdir -p msp/{admincerts,cacerts,tlscacerts,users}
+</code></pre>
+
+<h2 id="42-copy-necessary-certs">(4.2) Copy necessary certs</h2>
+<pre><code class="bash"># organization ca-cert
+cp ./ca/server/crypto/ca-cert.pem ./msp/cacerts/orderer.morgen.net-ca-cert.pem
+
+# TLS ca-cert
+cp ../ca-tls.morgen.net/ca/server/crypto/ca-cert.pem ./msp/tlscacerts/ca-tls.morgen.net.cert.pem
+
+# organization admin cert
+cp ./admin/msp/signcerts/cert.pem  ./msp/admincerts/orderer.morgen.net-admin-cert.pem
+</code></pre>
+
+<h1 id="5-identity-classification">(5) Identity Classification</h1>
+<p>For identity classification we have to set up the config.yaml file in a given MSP folder.</p>
+<pre><code class="bash"># create the config.yaml file
+vi orderer/msp/config.yaml
+
+# add the following content
+NodeOUs:
+  Enable: true
+  ClientOUIdentifier:
+    Certificate: cacerts/orderer.morgen.net-ca-cert.pem
+    OrganizationalUnitIdentifier: client
+  PeerOUIdentifier:
+    Certificate: cacerts/orderer.morgen.net-ca-cert.pem
+    OrganizationalUnitIdentifier: peer
+  AdminOUIdentifier:
+    Certificate: cacerts/orderer.morgen.net-ca-cert.pem
+    OrganizationalUnitIdentifier: admin
+  OrdererOUIdentifier:
+    Certificate: cacerts/orderer.morgen.net-ca-cert.pem
+    OrganizationalUnitIdentifier: orderer
+</code></pre>
+              
+            </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+    
+      <p>published 2020 <a href="https://twitter.com/samlinux">Roland Bole</a>.</p>
+    
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+      
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      
+      
+      
+    </span>
+</div>
+    <script>var base_url = '../..';</script>
+    <script src="../../js/theme.js" defer></script>
+      <script src="../../search/main.js" defer></script>
+    <script defer>
+        window.onload = function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        };
+    </script>
+
+</body>
+</html>

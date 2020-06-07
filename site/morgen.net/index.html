@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  
+  
+  <link rel="shortcut icon" href="../img/favicon.ico">
+  <title>The morgen.net - Hyperledger Fabric Study Guide</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700" />
+
+  <link rel="stylesheet" href="../css/theme.css" />
+  <link rel="stylesheet" href="../css/theme_extra.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" />
+  <link href="../css/format.css" rel="stylesheet" />
+  
+  <script>
+    // Current page data
+    var mkdocs_page_name = "The morgen.net";
+    var mkdocs_page_input_path = "morgen.net/index.md";
+    var mkdocs_page_url = null;
+  </script>
+  
+  <script src="../js/jquery-2.1.1.min.js" defer></script>
+  <script src="../js/modernizr-2.8.3.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script> 
+  
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+        <a href=".." class="icon icon-home"> Hyperledger Fabric Study Guide</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="..">Home</a>
+                    </li>
+                </ul>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../setup/">Installation</a>
+                    </li>
+                </ul>
+                <ul class="current">
+                    <li class="toctree-l1 current"><a class="reference internal current" href="./">The morgen.net</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#network-configuration">Network configuration</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#create-the-root-folder">Create the root folder</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#create-the-project-structure">Create the project structure</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#how-to-reset-the-network">How to reset the network</a>
+    </li>
+    </ul>
+                    </li>
+                </ul>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../nodeSdk/">Nodejs SDK</a>
+                    </li>
+                </ul>
+                <ul>
+                    <li class="toctree-l1"><a class="" href="../about/release-notes.md">Release Notes</a>
+                    </li>
+                </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="..">Hyperledger Fabric Study Guide</a>
+      </nav>
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="..">Docs</a> &raquo;</li>
+    
+      
+    
+    <li>The morgen.net</li>
+    <li class="wy-breadcrumbs-aside">
+      
+    </li>
+  </ul>
+  
+  <hr/>
+</div>
+          <div role="main">
+            <div class="section">
+              
+                <h1 id="the-morgennet-network">The morgen.net network</h1>
+<p><img alt="morgen.net" src="../img/the-morgen.net-network.png" title="morgen.net" /></p>
+<p>In this scenario we are going to setup a fabric network from scratch. You can find the network topology in the diagram above.</p>
+<p>Starting from a single organization we need two more organizations. One for the Ordering-Service and another for the TLS-Service.</p>
+<p>To create the crypto artifacts we use fabric-ca. So every organization starts with his own certificate authority (CA).</p>
+<p>A central TLS Service is established to provide the TLS certificates for the whole network members.</p>
+<h2 id="network-configuration">Network configuration</h2>
+<p>In order to be able to address the network members correctly by it`s name and to avoid some common TLS problems we can make some dns entries in the servers hosts file.</p>
+<pre><code class="bash"># edit local hosts file
+vi /etc/hosts
+
+# add the following domains
+127.0.0.1 ca-tls.morgen.net
+127.0.0.1 ca-orderer.morgen.net
+127.0.0.1 ca-mars.morgen.net
+127.0.0.1 peer0.mars.morgen.net
+127.0.0.1 peer1.mars.morgen.net
+127.0.0.1 orderer.morgen.net
+</code></pre>
+
+<h2 id="create-the-root-folder">Create the root folder</h2>
+<p>First, we start with a short project setup. Based on our fabric installation set up, we switch to the fabric folder as our starting point.</p>
+<pre><code class="bash"># we create the base folder 
+cd /$USER/fabric/
+mkdir morgen.net
+cd morgen.net
+</code></pre>
+
+<h2 id="create-the-project-structure">Create the project structure</h2>
+<p>Derived from our network topology we create the following directory structure.</p>
+<pre><code class="bash">mkdir ca-tls.morgen.at
+mkdir ca-orderer.morgen.at
+mkdir ca-mars.morgen.at
+</code></pre>
+
+<p>As you can see we create a root folder for every organization. You can check the structure.</p>
+<pre><code class="bash">tree .
+.
+├── ca-mars.morgen.at
+├── ca-orderer.morgen.at
+└── ca-tls.morgen.at
+</code></pre>
+
+<p>We need a node.js client application as well to interact with the network. For this we create a folder called app. We will come back later to this folder.</p>
+<pre><code class="bash">mkdir app
+</code></pre>
+
+<p>In this scenario we need a simple chaincode. For this we can use the <strong>sacc</strong>''** chaincode from the fabric-samples. </p>
+<pre><code class="bash">mkdir chaincode
+cp -r ../fabric-samples/chaincode/sacc/ ./
+</code></pre>
+
+<p>The final folder structure should look like this.</p>
+<pre><code class="bash">tree .
+.
+├── app
+├── ca-mars.morgen.net
+├── ca-orderer.morgen.net
+├── ca-tls.morgen.net
+├── chaincode
+└── sacc
+    └── sacc.go
+</code></pre>
+
+<p>Now we are ready to set up each organization step by step. We will do that in the following order.
+1. <a href="ca-tls.morgen.net/">ca-tls.morgen.net</a>
+2. <a href="./ca-orderer.morgen.net/index.md">ca-orderer.morgen.net</a>
+3. <a href="ca-mars.morgen.net/">ca-mars.morgen.net</a>
+4. <a href="index2/">start the network</a></p>
+<h2 id="how-to-reset-the-network">How to reset the network</h2>
+<ol>
+<li><a href="clearSetup/">Instructions to clear the network</a></li>
+</ol>
+              
+            </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../nodeSdk/" class="btn btn-neutral float-right" title="Nodejs SDK">Next <span class="icon icon-circle-arrow-right"></span></a>
+      
+      
+        <a href="../setup/" class="btn btn-neutral" title="Installation"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+    
+      <p>published 2020 <a href="https://twitter.com/samlinux">Roland Bole</a>.</p>
+    
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+      
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      
+      
+        <span><a href="../setup/" style="color: #fcfcfc;">&laquo; Previous</a></span>
+      
+      
+        <span style="margin-left: 15px"><a href="../nodeSdk/" style="color: #fcfcfc">Next &raquo;</a></span>
+      
+    </span>
+</div>
+    <script>var base_url = '..';</script>
+    <script src="../js/theme.js" defer></script>
+      <script src="../search/main.js" defer></script>
+    <script defer>
+        window.onload = function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        };
+    </script>
+
+</body>
+</html>
