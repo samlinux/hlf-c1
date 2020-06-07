@@ -1,5 +1,5 @@
 # The morgen.net network
-![morgen.net](../img/the-morgen.net-network.png "morgen.net")
+![morgen.net](../../img/the-morgen.net-network.png "morgen.net")
 
 In this scenario we are going to setup a fabric network from scratch. You can find the network topology in the diagram above.
 

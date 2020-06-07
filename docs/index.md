@@ -1,12 +1,7 @@
-# Hyperledger Fabric - Fundamentals
+# Hyperledger Fabric Learning Path
+This is my approach to study hyperledger fabric.
 
-## Course overview
+I will cover two perspectives: 
 
-## Base Fabric Installation
-- [Prepare and set up the host](./setup/index.md)
-
-## Install the morgen.net network
-- [Overview](./morgen.net/index.md)
-
-## How to use the Hyperledger Fabric Node SDK
-- [Overview](./nodeSdk/index.md)
+- The first view is on an administrator who wants the plan and setup an Hyperleder Fabric Network and
+- the second view is on an application developer who wants to develop an application based on an existing Hyperledger Fabric Network.
