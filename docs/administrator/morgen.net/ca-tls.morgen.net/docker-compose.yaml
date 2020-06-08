@@ -1,0 +1,21 @@
+version: "3.3"
+
+networks:
+  morgen:
+
+services:
+  ca-tls.morgen.net:
+    container_name: ca-tls.morgen.net
+    image: hyperledger/fabric-ca:1.4.6
+    command: sh -c 'fabric-ca-server start -b ca-tls.morgen.net-admin:ca-tls.morgen.net-adminpw --port 7052'
+    environment:
+      - FABRIC_CA_SERVER_HOME=/tmp/hyperledger/fabric-ca/crypto
+      - FABRIC_CA_SERVER_CSR_CN=ca-tls.morgen.net
+      - FABRIC_CA_SERVER_CSR_HOSTS=ca-tls.morgen.net
+      - FABRIC_CA_SERVER_DEBUG=true
+    volumes:
+      - ./ca/server:/tmp/hyperledger/fabric-ca
+    networks:
+      - morgen
+    ports:
+      - 7052:7052

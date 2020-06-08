@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  
+  
+  <link rel="shortcut icon" href="../../img/favicon.ico">
+  <title>Set up ca-mars.morgen.net - Hyperledger Fabric Study Guide</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700" />
+
+  <link rel="stylesheet" href="../../css/theme.css" />
+  <link rel="stylesheet" href="../../css/theme_extra.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" />
+  <link href="../../css/format.css" rel="stylesheet" />
+  
+  <script>
+    // Current page data
+    var mkdocs_page_name = "Set up ca-mars.morgen.net";
+    var mkdocs_page_input_path = "morgen.net/ca-mars.morgen.net/index.md";
+    var mkdocs_page_url = null;
+  </script>
+  
+  <script src="../../js/jquery-2.1.1.min.js" defer></script>
+  <script src="../../js/modernizr-2.8.3.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script> 
+  
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+        <a href="../.." class="icon icon-home"> Hyperledger Fabric Study Guide</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../..">Home</a>
+                    </li>
+                </ul>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../setup/">Installation</a>
+                    </li>
+                </ul>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../">The morgen.net</a>
+                    </li>
+                </ul>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../nodeSdk/">Nodejs SDK</a>
+                    </li>
+                </ul>
+                <ul>
+                    <li class="toctree-l1"><a class="" href="../../about/release-notes.md">Release Notes</a>
+                    </li>
+                </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../..">Hyperledger Fabric Study Guide</a>
+      </nav>
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../..">Docs</a> &raquo;</li>
+    
+      
+    
+    <li>Set up ca-mars.morgen.net</li>
+    <li class="wy-breadcrumbs-aside">
+      
+    </li>
+  </ul>
+  
+  <hr/>
+</div>
+          <div role="main">
+            <div class="section">
+              
+                <h1 id="set-up-ca-marsmorgennet">Set up ca-mars.morgen.net</h1>
+<p>The ca-mars.morgen.net organization is our main organization in this example. This organization runs the blockchain for hin own need. As we have seen the set up process for the CA is the same as we have done it already for the ca-orderer.morgen.net.</p>
+<ol>
+<li>basic preparation (including TLS certificate for the CA bootstrap identity, docker-compose set up and CA set up process)</li>
+<li>the creation of the CA admin </li>
+<li>the enrollment of the organisation members</li>
+</ol>
+<h1 id="1-basic-preparation">(1) Basic preparation</h1>
+<h2 id="11-create-the-base-folders">(1.1) Create the base folders</h2>
+<p>Frist we switch into the organisation folder and create the base folders, where our CA is living.</p>
+<pre><code class="bash">cd ca-mars.morgen.net
+mkdir -p ca/server
+mkdir -p ca/client/{admin,tls-admin}
+</code></pre>
+
+<p>As a next step we are going the enroll the TLS certificate for the CAs bootstrap admin identity. This identity we have already registered in the set up process from the ca-tls.morgen.net organisation.</p>
+<p>For this we have to copy the main TLS-CA cert to the both admin directories.</p>
+<pre><code class="bash"># copy ca-tls cert for bootstrap ca identity
+cp ../ca-tls.morgen.net/ca/client/crypto/ca-tls.morgen.net.cert.pem ca/client/tls-admin
+
+# copy ca-tls cert for admin ca admin identity
+cp ../ca-tls.morgen.net/ca/client/crypto/ca-tls.morgen.net.cert.pem ca/client/admin
+</code></pre>
+
+<p>Now we can enroll the TLS identity for the organizations admin.</p>
+<pre><code class="bash"># set the needed environment vars
+export FABRIC_CA_CLIENT_HOME=./ca/client/tls-admin
+export FABRIC_CA_CLIENT_TLS_CERTFILES=./ca-tls.morgen.net.cert.pem
+
+# enroll the admin
+fabric-ca-client enroll -d -u https://ca-mars.morgen.net-admin:ca-mars-adminpw@ca-tls.morgen.net:7052 --enrollment.profile tls --csr.hosts 'ca-mars.morgen.net'
+
+# rename admins private key for later CA configuration
+mv ca/client/tls-admin/tls-msp/keystore/*_sk ca/client/tls-admin/tls-msp/keystore/key.pem
+</code></pre>
+
+<h2 id="12-create-docker-compose-file">(1.2) Create docker-compose file</h2>
+<p>We create the following docker.compose.yaml file.</p>
+<pre><code class="bash"># create a new file
+vi docker-compose.yaml 
+
+# add the following content
+version: &quot;3.3&quot;
+
+networks:
+  morgen:
+
+services:
+  ca-mars.morgen.net:
+    container_name: ca-mars.morgen.net
+    image: hyperledger/fabric-ca:1.4.6
+    command: /bin/bash -c 'fabric-ca-server init -b ca-mars.morgen.net-admin:${CaMarsAdminPw} --port 7054'
+    environment:
+      - FABRIC_CA_SERVER_HOME=/tmp/hyperledger/fabric-ca/crypto
+      - FABRIC_CA_SERVER_TLS_ENABLED=true
+      - FABRIC_CA_SERVER_CSR_CN=ca-mars.morgen.net
+      - FABRIC_CA_SERVER_CSR_HOSTS=ca-mars.morgen.net
+      - FABRIC_CA_SERVER_DEBUG=true
+    volumes:
+      - ./ca/server:/tmp/hyperledger/fabric-ca
+      - ./ca/client:/tmp/hyperledger/fabric-ca-client
+    networks:
+      - morgen
+    ports:
+      - 7054:7054
+</code></pre>
+
+<h2 id="13-initialise-the-ca">(1.3) Initialise the CA</h2>
+<pre><code class="bash">docker-compose up
+</code></pre>
+
+<p>The set up process is the same as for ca-tls.morgen.net. The only thing we have to do is modify the fabric-ca-server-config.yaml and set the ca.name to ca-mars.morgen.net. Then you can modify the docker-compose.yaml file and replace the <strong>init</strong> command with <strong>start</strong>.</p>
+<pre><code class="bash"># modify fabric-ca-server config
+vi ca/server/crypto/fabric-ca-server-config.yaml
+
+# change - modify docker-compose.yaml file
+#tls:
+## Enable TLS (default: false)
+#  enabled: true
+## TLS for the server's listening port
+#  certfile: /tmp/hyperledger/fabric-ca-client/tls-admin/tls-msp/signcerts/cert.pem
+#  keyfile: /tmp/hyperledger/fabric-ca-client/tls-admin/tls-msp/keystore/key.pem
+
+#ca:
+  # Name of this CA
+  # name: ca-mars.morgen.net
+
+# --------------------------------
+# modify docker-compose.yaml file
+# --------------------------------
+vi docker-compose.yaml
+
+# change the command parameter
+command: sh -c 'fabric-ca-server start -b ca-orderer.morgen.net-admin:${CaMarsAdminPw} --port 7053'
+</code></pre>
+
+<h2 id="14-start-the-ca">(1.4) Start the CA</h2>
+<p>After following the previous steps, we can start the orderer organisation CA.</p>
+<pre><code class="bash"># start the CA in the background
+docker-compose up -d
+
+# check it the CA is running
+docker-compose ps
+
+# check the logs
+docker-compose logs
+</code></pre>
+
+<h2 id="15-enroll-the-ca-marsmorgennet-admin-preparation">(1.5) Enroll the ca-mars.morgen.net-admin - preparation</h2>
+<p>First we have to set two enviroments variables.</p>
+<pre><code class="bash">export FABRIC_CA_CLIENT_HOME=./ca/client/admin
+export FABRIC_CA_CLIENT_TLS_CERTFILES=ca-tls.morgen.net.cert.pem
+</code></pre>
+
+<h2 id="16-enroll-the-ca-orderermorgen-net-admin-enrollement">(1.6) Enroll the ca-orderer.morgen-net-admin - enrollement</h2>
+<p>After the environment variables are set we can enroll the ca-admin user for this particular organisation.</p>
+<pre><code class="bash">fabric-ca-client enroll -d -u https://ca-mars.morgen.net-admin:ca-mars-adminpw@ca-mars.morgen.net:7054 --csr.hosts 'ca-mars.morgen.net'
+</code></pre>
+
+<p>With these steps we have finally finished the set up process of the ca-orderer.morgen.net CA. Now the admin of this CA can start to interact with this CA to register members for this organization.</p>
+<h2 id="17-register-the-members-of-the-network">(1.7) Register the members of the network</h2>
+<p>As a next step we register the organization members for a later usage. In this organization we are going to use following organization members:</p>
+<ol>
+<li>two peer nodes and</li>
+<li>one admin user for this organization</li>
+<li>one client user for the node.js application</li>
+</ol>
+<p>The steps to enroll an identity are basically always the same:</p>
+<ol>
+<li>We register an identity with the corresponding CA.</li>
+<li>We enroll this identity.</li>
+<li>If needed, we enroll the TLS identity with the corresponding TLS-CA. Note in our case we have already registered the orderer node TLS identity in previous steps.</li>
+</ol>
+<p>Let's go and register the members.</p>
+<pre><code class="bash"># peer0
+fabric-ca-client register -d --id.name peer0.mars.morgen.net --id.secret peer0PW --id.type peer -u https://ca-mars.morgen.net:7054 --csr.hosts 'peer0.mars.morgen.net'
+
+# peer1
+fabric-ca-client register -d --id.name peer1.mars.morgen.net --id.secret peer1PW --id.type peer -u https://ca-mars.morgen.net:7054 --csr.hosts 'peer1.mars.morgen.net'
+
+# an organization admin
+fabric-ca-client register -d --id.name admin-mars.morgen.net --id.secret marsAdminPW --id.type admin -u https://ca-mars.morgen.net:7054 --csr.hosts '*.mars.morgen.net'
+
+# an organization client user
+fabric-ca-client register -d --id.name user1-mars.morgen.net --id.secret marsUserPW --id.type client -u https://ca-mars.morgen.net:7054 --csr.hosts '*.mars.morgen.net'
+</code></pre>
+
+<h1 id="2-creation-of-the-mars-organization-admin">(2) Creation of the mars organization admin</h1>
+<p>Now we can set up the admin user for the mars organization nodes. The admin user is required to administrate the peer nodes of this organization.</p>
+<h2 id="21-create-base-folder">(2.1) Create base folder</h2>
+<p>We create an base folder for the orderer admin user.</p>
+<pre><code class="bash">mkdir  -p admin/ca
+</code></pre>
+
+<h2 id="22-copy-ca-cert-file">(2.2) Copy ca-cert file</h2>
+<p>For TLS communication we copy the ca-tls.morgen.net.cert.pem file to the admin folder.</p>
+<pre><code class="bash">cp ../ca-tls.morgen.net/ca/client/crypto/ca-tls.morgen.net.cert.pem admin/ca
+</code></pre>
+
+<h2 id="23-enroll-the-admin">(2.3) Enroll the admin</h2>
+<p>To enroll the orderer admin we have to do two steps</p>
+<ol>
+<li>we need to set some environment variables</li>
+<li>we enroll the admin</li>
+</ol>
+<h3 id="231-set-environment-variables">(2.3.1) Set environment variables</h3>
+<pre><code class="bash"># set needed environment vars
+export FABRIC_CA_CLIENT_HOME=./admin
+export FABRIC_CA_CLIENT_TLS_CERTFILES=ca/ca-tls.morgen.net.cert.pem
+export FABRIC_CA_CLIENT_MSPDIR=msp
+</code></pre>
+
+<h2 id="232-enrollment-of-the-admin">(2.3.2) Enrollment of the admin</h2>
+<p>Enroll the orderer admin user.</p>
+<pre><code class="bash">fabric-ca-client enroll -d -u https://admin-mars.morgen.net:marsAdminPW@ca-mars.morgen.net:7054 --csr.hosts '*.mars.morgen.net'
+</code></pre>
+
+<h1 id="3-set-up-the-peers">(3) Set up the peers</h1>
+<h2 id="31-enroll-peer-peer0marsmorgennet">(3.1) Enroll peer peer0.mars.morgen.net</h2>
+<h3 id="311-preparation">(3.1.1) Preparation</h3>
+<p>We create the following folderstructur for the peer. This folder is used later at runtime and will mountend into the each peer container.</p>
+<pre><code class="bash">mkdir -p peers/peer0/assets/{ca,tls-ca}
+</code></pre>
+
+<h4 id="312-copy-needed-ca-certs">(3.1.2) Copy needed CA certs</h4>
+<pre><code class="bash"># copy orgs root certificate to the peer
+cp ./ca/server/crypto/ca-cert.pem ./peers/peer0/assets/ca/mars.morgen.net-ca-cert.pem
+
+# copying TLS-CA root certificate to the peer for tls authentication
+cp ../ca-tls.morgen.net/ca/client/crypto/ca-tls.morgen.net.cert.pem ./peers/peer0/assets/tls-ca/
+</code></pre>
+
+<h4 id="313-enroll-peer0">(3.1.3) Enroll peer0</h4>
+<p>Now we can enroll peer0 from the ca-mars.morgen.net CA.</p>
+<pre><code class="bash"># set the required environment vars
+export FABRIC_CA_CLIENT_MSPDIR=msp
+export FABRIC_CA_CLIENT_HOME=./peers/peer0/
+export FABRIC_CA_CLIENT_TLS_CERTFILES=assets/tls-ca/ca-tls.morgen.net.cert.pem
+
+fabric-ca-client enroll -d -u https://peer0.mars.morgen.net:peer0PW@ca-mars.morgen.net:7054 --csr.hosts 'peer0.mars.morgen.net'
+</code></pre>
+
+<h4 id="315-peer0-marsmorgennet-enrolling-with-tls-ca-to-get-the-tls-certificate">(3.1.5) peer0-mars.morgen.net enrolling with TLS-CA to get the tls certificate</h4>
+<p>Now that we have enrolled the peer0 identity we also need to enroll the TLS identity for the peer.</p>
+<pre><code class="bash"># set the required environment vars
+export FABRIC_CA_CLIENT_MSPDIR=tls-msp
+export FABRIC_CA_CLIENT_TLS_CERTFILES=assets/tls-ca/ca-tls.morgen.net.cert.pem
+
+fabric-ca-client enroll -d -u https://peer0.mars.morgen.net:peer0PW@ca-tls.morgen.net:7052 --enrollment.profile tls --csr.hosts 'peer0.mars.morgen.net'
+</code></pre>
+
+<h4 id="316-rename-the-private-key-from-tls-ca">(3.1.6) Rename the private key from tls-ca</h4>
+<p>We can rename the private key of the orderer for a possible later useage.</p>
+<pre><code class="bash">mv peers/peer0/tls-msp/keystore/*_sk peers/peer0/tls-msp/keystore/key.pem
+</code></pre>
+
+<h2 id="32-enroll-peer1">(3.2) Enroll peer1</h2>
+<p>For peer1 we can do exactly the same enroll process as we did for peer0.</p>
+<h4 id="321-preparation">(3.2.1) Preparation</h4>
+<pre><code class="bash"># we create peers folder
+mkdir -p peers/peer1/assets/{ca,tls-ca}
+</code></pre>
+
+<h4 id="322-copy-needed-ca-certs">(3.2.2) Copy needed CA certs</h4>
+<pre><code class="bash"># copy orgs root certificate to the peer
+cp ./ca/server/crypto/ca-cert.pem ./peers/peer1/assets/ca/mars.morgen.net-ca-cert.pem
+
+# copying TLS-CA root certificate to the peer for tls authentication
+cp ../ca-tls.morgen.net/ca/client/crypto/ca-tls.morgen.net.cert.pem ./peers/peer1/assets/tls-ca/
+</code></pre>
+
+<h4 id="324-enroll-peer0">(3.2.4) Enroll peer0</h4>
+<p>Now we can enroll peer0 from the ca-mars.morgen.net CA.</p>
+<pre><code class="bash">export FABRIC_CA_CLIENT_MSPDIR=msp
+export FABRIC_CA_CLIENT_HOME=./peers/peer1/
+export FABRIC_CA_CLIENT_TLS_CERTFILES=assets/tls-ca/ca-tls.morgen.net.cert.pem
+
+fabric-ca-client enroll -d -u https://peer1.mars.morgen.net:peer1PW@ca-mars.morgen.net:7054 --csr.hosts 'peer1.mars.morgen.net'
+</code></pre>
+
+<h4 id="325-peer1-marsmorgennet-enrolling-with-tls-ca-to-get-the-tls-certificate">(3.2.5) peer1-mars.morgen.net enrolling with TLS-CA to get the tls certificate</h4>
+<pre><code class="bash">export FABRIC_CA_CLIENT_MSPDIR=tls-msp
+export FABRIC_CA_CLIENT_TLS_CERTFILES=assets/tls-ca/ca-tls.morgen.net.cert.pem
+
+fabric-ca-client enroll -d -u https://peer1.mars.morgen.net:peer1PW@ca-tls.morgen.net:7052 --enrollment.profile tls --csr.hosts 'peer1.mars.morgen.net'
+</code></pre>
+
+<h4 id="326-rename-the-private-key-from-tls-ca">(3.2.6) rename the private key from tls-ca</h4>
+<pre><code class="bash">mv peers/peer1/tls-msp/keystore/*_sk peers/peer1/tls-msp/keystore/key.pem
+</code></pre>
+
+<h1 id="4-set-up-msp">(4) Set up MSP</h1>
+<p>We have to set up the organization MSP.</p>
+<h2 id="41-create-base-msp-folder">(4.1) Create base MSP folder</h2>
+<pre><code class="bash">mkdir -p msp/{admincerts,cacerts,tlscacerts,users}
+</code></pre>
+
+<h2 id="43-copy-necessary-certs">(4.3)  Copy necessary certs</h2>
+<pre><code class="bash"># copy org mars root ca certificat to msp/cacerts directory
+cp ./ca/server/crypto/ca-cert.pem ./msp/cacerts/mars.morgen.net-ca-cert.pem
+
+#copy TLS CA root certificat to msp/tlscacerts directory
+cp ../ca-tls.morgen.net/ca/client/crypto/ca-tls.morgen.net.cert.pem ./peers/peer1/assets/tls-ca/
+
+# copy org mars admin singning certificat to msp/admincerts directory
+cp ./admin/msp/signcerts/cert.pem  ./msp/admincerts/mars.morgen.net-admin-cert.pem
+</code></pre>
+
+<h1 id="5-identity-classification">(5) Identity Classification</h1>
+<p>For identity classification we have to set up the config.yaml file in a given MSP folder.</p>
+<pre><code class="bash">vi msp/config.yaml
+NodeOUs:
+  Enable: true
+  ClientOUIdentifier:
+    Certificate: cacerts/mars.morgen.net-ca-cert.pem
+    OrganizationalUnitIdentifier: client
+  PeerOUIdentifier:
+    Certificate: cacerts/mars.morgen.net-ca-cert.pem
+    OrganizationalUnitIdentifier: peer
+  AdminOUIdentifier:
+    Certificate: cacerts/mars.morgen.net-ca-cert.pem
+    OrganizationalUnitIdentifier: admin
+  OrdererOUIdentifier:
+    Certificate: cacerts/mars.morgen.net-ca-cert.pem
+    OrganizationalUnitIdentifier: orderer
+</code></pre>
+
+<pre><code class="bash">vi admin/msp/config.yaml
+NodeOUs:
+  Enable: true
+  ClientOUIdentifier:
+    Certificate: cacerts/0-0-0-0-7054.pem
+    OrganizationalUnitIdentifier: client
+  PeerOUIdentifier:
+    Certificate: cacerts/0-0-0-0-7054.pem
+    OrganizationalUnitIdentifier: peer
+  AdminOUIdentifier:
+    Certificate: cacerts/0-0-0-0-7054.pem
+    OrganizationalUnitIdentifier: admin
+  OrdererOUIdentifier:
+    Certificate: cacerts/0-0-0-0-7054.pem
+    OrganizationalUnitIdentifier: orderer
+</code></pre>
+
+<pre><code class="bash">vi peers/peer0/msp/config.yaml
+NodeOUs:
+  Enable: true
+  ClientOUIdentifier:
+    Certificate: cacerts/0-0-0-0-7054.pem
+    OrganizationalUnitIdentifier: client
+  PeerOUIdentifier:
+    Certificate: cacerts/0-0-0-0-7054.pem
+    OrganizationalUnitIdentifier: peer
+  AdminOUIdentifier:
+    Certificate: cacerts/0-0-0-0-7054.pem
+    OrganizationalUnitIdentifier: admin
+  OrdererOUIdentifier:
+    Certificate: cacerts/0-0-0-0-7054.pem
+    OrganizationalUnitIdentifier: orderer
+</code></pre>
+
+<pre><code class="bash">vi peers/peer1/msp/config.yaml
+NodeOUs:
+  Enable: true
+  ClientOUIdentifier:
+    Certificate: cacerts/0-0-0-0-7054.pem
+    OrganizationalUnitIdentifier: client
+  PeerOUIdentifier:
+    Certificate: cacerts/0-0-0-0-7054.pem
+    OrganizationalUnitIdentifier: peer
+  AdminOUIdentifier:
+    Certificate: cacerts/0-0-0-0-7054.pem
+    OrganizationalUnitIdentifier: admin
+  OrdererOUIdentifier:
+    Certificate: cacerts/0-0-0-0-7054.pem
+    OrganizationalUnitIdentifier: orderer
+</code></pre>
+              
+            </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+    
+      <p>published 2020 <a href="https://twitter.com/samlinux">Roland Bole</a>.</p>
+    
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+      
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      
+      
+      
+    </span>
+</div>
+    <script>var base_url = '../..';</script>
+    <script src="../../js/theme.js" defer></script>
+      <script src="../../search/main.js" defer></script>
+    <script defer>
+        window.onload = function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        };
+    </script>
+
+</body>
+</html>

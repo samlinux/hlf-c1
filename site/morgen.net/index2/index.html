@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  
+  
+  <link rel="shortcut icon" href="../../img/favicon.ico">
+  <title>Put all things together - Hyperledger Fabric Study Guide</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700" />
+
+  <link rel="stylesheet" href="../../css/theme.css" />
+  <link rel="stylesheet" href="../../css/theme_extra.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" />
+  <link href="../../css/format.css" rel="stylesheet" />
+  
+  <script>
+    // Current page data
+    var mkdocs_page_name = "Put all things together";
+    var mkdocs_page_input_path = "morgen.net/index2.md";
+    var mkdocs_page_url = null;
+  </script>
+  
+  <script src="../../js/jquery-2.1.1.min.js" defer></script>
+  <script src="../../js/modernizr-2.8.3.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script> 
+  
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+        <a href="../.." class="icon icon-home"> Hyperledger Fabric Study Guide</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../..">Home</a>
+                    </li>
+                </ul>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../setup/">Installation</a>
+                    </li>
+                </ul>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../">The morgen.net</a>
+                    </li>
+                </ul>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../nodeSdk/">Nodejs SDK</a>
+                    </li>
+                </ul>
+                <ul>
+                    <li class="toctree-l1"><a class="" href="../../about/release-notes.md">Release Notes</a>
+                    </li>
+                </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../..">Hyperledger Fabric Study Guide</a>
+      </nav>
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../..">Docs</a> &raquo;</li>
+    
+      
+    
+    <li>Put all things together</li>
+    <li class="wy-breadcrumbs-aside">
+      
+    </li>
+  </ul>
+  
+  <hr/>
+</div>
+          <div role="main">
+            <div class="section">
+              
+                <h1 id="put-all-things-together">Put all things together</h1>
+<p>Make sure you have done all steps in:</p>
+<ul>
+<li>ca-tls.morgen.net/index.md</li>
+<li>ca-orderer.morgen.net/index.md</li>
+<li>ca-mars.morgen.net/index.md</li>
+</ul>
+<p>After we have created the crypto materials we can bootstrap the fabric network.</p>
+<p>This process can be summarized in the following steps:</p>
+<ol>
+<li>Create the network docker-compose.file</li>
+<li>Create the genesis block</li>
+<li>Create the channel config</li>
+<li>Start the network</li>
+<li>Create the channel and join all peers</li>
+<li>Install and instantiate the chaincode</li>
+<li>Test the network with some queries</li>
+</ol>
+<h2 id="1-create-docker-composefile">(1) Create docker-compose.file</h2>
+<p>First we have to setup our docker-compose file. You can find the details in docker-compose.yaml file in this directory.</p>
+<p>Overall we have six services in this composer file. We can group these services by type.</p>
+<h3 id="orderer-service-1">Orderer service (1)</h3>
+<ul>
+<li>orderer.morgen.net</li>
+</ul>
+<h3 id="peers-2">Peers (2)</h3>
+<ul>
+<li>peer0.mars.morgen.net</li>
+<li>peer1.mars.morgen.net</li>
+</ul>
+<h3 id="state-database-1-db-per-each-peer">State Database (1 db per each peer)</h3>
+<ul>
+<li>couchdb0</li>
+<li>couchdb1</li>
+</ul>
+<h3 id="cli-1">Cli (1)</h3>
+<ul>
+<li>cli-mars.morgen.net</li>
+</ul>
+<p>To keep our couchDb database credentials secure we use the docker-compose .env file.</p>
+<pre><code class="bash"># create the file
+vi .env
+
+# add the password in the format: var=value
+couchdbUser=root
+couchdbPwd=toor
+</code></pre>
+
+<h2 id="2-create-the-genesis-block">(2) Create the genesis block</h2>
+<pre><code class="bash">configtxgen -profile OneOrgOrdererGenesis -channelID orderersyschannel -outputBlock ./ca-orderer.morgen.net/orderer/genesis.block
+</code></pre>
+
+<h2 id="3-create-the-channel-config">(3) Create the channel config</h2>
+<pre><code class="bash">configtxgen -profile OneOrgChannel -outputCreateChannelTx ./ca-mars.morgen.net/peers/peer0/assets/channel.tx -channelID channel1
+</code></pre>
+
+<h2 id="4-start-the-network">(4) Start the network</h2>
+<p>We start the network in the background.</p>
+<pre><code class="bash"># start the network
+docker-compose up -d
+
+# watch logs
+docker-compose logs -f
+
+</code></pre>
+
+<p>Open a further terminals and check if the network is running.</p>
+<pre><code class="bash">
+# check if the network is running
+docker-compose ps
+
+# you should see
+        Name                Command       State           Ports
+------------------------------------------------------------------------
+cli-mars.morgen.net     sh                Up
+orderer.morgen.net      orderer           Up      0.0.0.0:7050-&gt;7050/tcp
+peer0.mars.morgen.net   peer node start   Up      0.0.0.0:7051-&gt;7051/tcp
+peer1.mars.morgen.net   peer node start   Up      0.0.0.0:8051-&gt;7051/tcp
+
+# check all running containers
+docker ps --format 'table {{.Names}}\t {{.Ports}}'
+
+# you should see
+NAMES                    PORTS
+peer1.mars.morgen.net    0.0.0.0:8051-&gt;7051/tcp
+peer0.mars.morgen.net    0.0.0.0:7051-&gt;7051/tcp
+cli-mars.morgen.net
+couchdb1                 4369/tcp, 9100/tcp, 0.0.0.0:6984-&gt;5984/tcp
+orderer.morgen.net       0.0.0.0:7050-&gt;7050/tcp
+couchdb0                 4369/tcp, 9100/tcp, 0.0.0.0:5984-&gt;5984/tcp
+ca-mars.morgen.net       0.0.0.0:7054-&gt;7054/tcp
+ca-orderer.morgen.net    0.0.0.0:7053-&gt;7053/tcp, 7054/tcp
+ca-tls.morgen.net        0.0.0.0:7052-&gt;7052/tcp, 7054/tcp
+</code></pre>
+
+<h2 id="5-create-the-channel-and-join-all-peers">(5) Create the channel and join all peers</h2>
+<p>To create the channel and join it to the peers we can use the cli container (cli-mars.morgen.net).</p>
+<pre><code class="bash"># switch into this container
+docker exec -it cli-mars.morgen.net bash 
+</code></pre>
+
+<p>To interact with the network we make sure that some environment variables are set correctly. For peer0 all environment variables are already set in the docker-compose file.</p>
+<pre><code class="bash"># needed environment variables
+export CORE_PEER_LOCALMSPID=&quot;marsMSP&quot;
+export CORE_PEER_MSPCONFIGPATH=&quot;/tmp/hyperledger/mars.morgen.net/admin/msp&quot;
+
+# these variables depends on the peer
+export CORE_PEER_TLS_ROOTCERT_FILE=&quot;/tmp/hyperledger/mars.morgen.net/peers/peer0/tls-msp/tlscacerts/tls-ca-tls-morgen-net-7052.pem&quot;
+export CORE_PEER_ADDRESS=&quot;peer0.mars.morgen.net:7051&quot;
+</code></pre>
+
+<p>We can check the existing environment variables in the cli container.</p>
+<pre><code class="bash">printenv |grep CORE
+
+# you should see
+CORE_PEER_LOCALMSPID=marsMSP
+CORE_PEER_TLS_ENABLED=true
+CORE_PEER_ID=cli-mars.morgen.net
+CORE_PEER_MSPCONFIGPATH=/tmp/hyperledger/mars.morgen.net/admin/msp
+
+CORE_PEER_TLS_ROOTCERT_FILE=/tmp/hyperledger/mars.morgen.net/peers/peer0/tls-msp/tlscacerts/tls-ca-tls-morgen-net-7052.pem
+CORE_PEER_ADDRESS=peer0.mars.morgen.net:7051
+</code></pre>
+
+<p>As a next step we can create the channel on peer0.</p>
+<pre><code class="bash">peer channel create -c channel1 -f /tmp/hyperledger/mars.morgen.net/peers/peer0/assets/channel.tx -o orderer.morgen.net:7050 --outputBlock /tmp/hyperledger/mars.morgen.net/peers/peer0/assets/channel1.block --tls --cafile /tmp/hyperledger/mars.morgen.net/peers/peer0/tls-msp/tlscacerts/tls-ca-tls-morgen-net-7052.pem
+</code></pre>
+
+<p>After this step we can join peer0 to the new channel.</p>
+<pre><code class="bash">peer channel join -b /tmp/hyperledger/mars.morgen.net/peers/peer0/assets/channel1.block
+</code></pre>
+
+<p>We can check if channel1 is successfully joind to peer0.</p>
+<pre><code class="bash">peer channel list
+
+# you should see
+Channels peers has joined:
+channel1
+</code></pre>
+
+<p>After this step we can switch over to peer1. For that we have to change the corresponding environment variables.</p>
+<pre><code class="bash">export CORE_PEER_TLS_ROOTCERT_FILE=&quot;/tmp/hyperledger/mars.morgen.net/peers/peer1/tls-msp/tlscacerts/tls-ca-tls-morgen-net-7052.pem&quot;
+export CORE_PEER_ADDRESS=&quot;peer1.mars.morgen.net:7051&quot;
+</code></pre>
+
+<p>Check if you are on peer1.</p>
+<pre><code class="bash">printenv | grep CORE_PEER_ADDRESS
+</code></pre>
+
+<p>On peer1 we have to fetch the newest channel information from the orderer. We can do that with the following command.</p>
+<pre><code class="bash">peer channel fetch newest /tmp/hyperledger/mars.morgen.net/peers/peer1/assets/channel1.block -c channel1 --orderer orderer.morgen.net:7050 --tls --cafile /tmp/hyperledger/mars.morgen.net/peers/peer0/tls-msp/tlscacerts/tls-ca-tls-morgen-net-7052.pem 
+</code></pre>
+
+<p>The next step is to join peer1 to channel1.</p>
+<pre><code class="bash">peer channel join -b /tmp/hyperledger/mars.morgen.net/peers/peer1/assets/channel1.block
+</code></pre>
+
+<p>Check if channel1 is successfully joind to peer1.</p>
+<pre><code class="bash">peer channel list
+
+# you should see
+Channels peers has joined:
+channel1
+</code></pre>
+
+<h2 id="6-install-and-instantiate-the-chaincode">(6) Install and instantiate the chaincode</h2>
+<p>To install the chaincode we switch back to peer0. For that we set the corresponding environment variables.</p>
+<pre><code class="bash">export CORE_PEER_TLS_ROOTCERT_FILE=&quot;/tmp/hyperledger/mars.morgen.net/peers/peer0/tls-msp/tlscacerts/tls-ca-tls-morgen-net-7052.pem&quot;
+export CORE_PEER_ADDRESS=&quot;peer0.mars.morgen.net:7051&quot;
+</code></pre>
+
+<p>Check if you are on peer0 again.</p>
+<pre><code class="bash">printenv | grep CORE_PEER_ADDRESS
+</code></pre>
+
+<p>Basically the process of installing a chaincode is divided in the following steps:</p>
+<ol>
+<li>install the chaincode</li>
+<li>check if chaincode is installed</li>
+<li>instantiate the chaincode</li>
+<li>use the chaincode with invoke or query operations</li>
+</ol>
+<p>To do this steps we can use the cli container. The cli container has mounted our chaincode folder (see the network docker-compose.yaml file). Becaue of this, we can call the following command to install the chaincode on the channel. </p>
+<pre><code class="bash">peer chaincode install -n sacc -v 1.0 -p github.com/hyperledger/fabric-samples/chaincode/sacc/
+</code></pre>
+
+<p>Check if the chaincode is installed.</p>
+<pre><code class="bash">peer chaincode list --installed
+
+# you should see
+Get installed chaincodes on peer:
+Name: sacc, Version: 1.0, Path: github.com/hyperledger/fabric-samples/chaincode/sacc/, Id: c05aa7ef2...
+</code></pre>
+
+<p>Based on the chaincode you have to instantiate the chaincode. In our example we use the sacc chaincode from the fabric-samples.</p>
+<pre><code class="bash">peer chaincode instantiate -n sacc -v 1.0 -o orderer.morgen.net:7050 -C channel1  -c '{&quot;Args&quot;:[&quot;msg&quot;,&quot;hello blockchain&quot;]}' --tls --cafile /tmp/hyperledger/mars.morgen.net/peers/peer0/tls-msp/tlscacerts/tls-ca-tls-morgen-net-7052.pem
+</code></pre>
+
+<blockquote>
+<p>Note: during this process a new container is created, the chaincode container dev-peer0.mars.morgen.net-sacc-1.0-82a3...</p>
+</blockquote>
+<p>We can no test the chaincode with a simple query.</p>
+<pre><code class="bash">peer chaincode query -n sacc -c '{&quot;Args&quot;:[&quot;query&quot;,&quot;msg&quot;]}' -C channel1 --tls --cafile /tmp/hyperledger/mars.morgen.net/peers/peer0/tls-msp/tlscacerts/tls-ca-tls-morgen-net-7052.pem
+
+# you should see
+hello blockchain
+</code></pre>
+
+<p>Now we are ready on peer0. Let's switch to peer1 to sync that peer. For that we switch to peer1 again by chaning the corresponding environment variables.</p>
+<pre><code class="bash">export CORE_PEER_TLS_ROOTCERT_FILE=&quot;/tmp/hyperledger/mars.morgen.net/peers/peer1/tls-msp/tlscacerts/tls-ca-tls-morgen-net-7052.pem&quot;
+export CORE_PEER_ADDRESS=&quot;peer1.mars.morgen.net:7051&quot;
+</code></pre>
+
+<p>Check again if you are on peer1 again.</p>
+<pre><code class="bash">printenv | grep CORE_PEER_ADDRESS
+</code></pre>
+
+<p>On peer1 no chaincode is installed, so we have to install the chaincode first to query the ledger from peer1. We do that with the following command.</p>
+<pre><code class="bash">peer chaincode install -n sacc -v 1.0 -p github.com/hyperledger/fabric-samples/chaincode/sacc/
+</code></pre>
+
+<p>Check if the chaincode is installed.</p>
+<pre><code class="bash">peer chaincode list --installed
+
+# you should see
+Get installed chaincodes on peer:
+Name: sacc, Version: 1.0, Path: github.com/hyperledger/fabric-samples/chaincode/sacc/, Id: c05aa...
+</code></pre>
+
+<p>Now you can query the leder from peer1.</p>
+<pre><code class="bash">peer chaincode query -n sacc -c '{&quot;Args&quot;:[&quot;query&quot;,&quot;msg&quot;]}' -C channel1 --tls --cafile /tmp/hyperledger/mars.morgen.net/peers/peer1/tls-msp/tlscacerts/tls-ca-tls-morgen-net-7052.pem
+</code></pre>
+
+<p>To set a new value to the key we can use the invoke command.</p>
+<pre><code class="bash">peer chaincode invoke -n sacc -c '{&quot;Args&quot;:[&quot;set&quot;, &quot;msg&quot;,&quot;hello morgen.net&quot;]}' -C channel1  --tls --cafile /tmp/hyperledger/mars.morgen.net/peers/peer1/tls-msp/tlscacerts/tls-ca-tls-morgen-net-7052.pem
+</code></pre>
+
+<p>At this point you can switch back to peer0 and query the ledger to see if the peer0 is in sync with the ledger.</p>
+<pre><code class="bash">export CORE_PEER_TLS_ROOTCERT_FILE=&quot;/tmp/hyperledger/mars.morgen.net/peers/peer0/tls-msp/tlscacerts/tls-ca-tls-morgen-net-7052.pem&quot;
+export CORE_PEER_ADDRESS=&quot;peer0.mars.morgen.net:7051&quot;
+</code></pre>
+
+<pre><code class="bash">peer chaincode query -n sacc -c '{&quot;Args&quot;:[&quot;query&quot;,&quot;msg&quot;]}' -C channel1 --tls --cafile /tmp/hyperledger/mars.morgen.net/peers/peer0/tls-msp/tlscacerts/tls-ca-tls-morgen-net-7052.pem
+
+# you should see
+hello morgen.net
+</code></pre>
+              
+            </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+    
+      <p>published 2020 <a href="https://twitter.com/samlinux">Roland Bole</a>.</p>
+    
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+      
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      
+      
+      
+    </span>
+</div>
+    <script>var base_url = '../..';</script>
+    <script src="../../js/theme.js" defer></script>
+      <script src="../../search/main.js" defer></script>
+    <script defer>
+        window.onload = function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        };
+    </script>
+
+</body>
+</html>

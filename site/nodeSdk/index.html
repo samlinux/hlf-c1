@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  
+  
+  <link rel="shortcut icon" href="../img/favicon.ico">
+  <title>Nodejs SDK - Hyperledger Fabric Study Guide</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700" />
+
+  <link rel="stylesheet" href="../css/theme.css" />
+  <link rel="stylesheet" href="../css/theme_extra.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" />
+  <link href="../css/format.css" rel="stylesheet" />
+  
+  <script>
+    // Current page data
+    var mkdocs_page_name = "Nodejs SDK";
+    var mkdocs_page_input_path = "nodeSdk/index.md";
+    var mkdocs_page_url = null;
+  </script>
+  
+  <script src="../js/jquery-2.1.1.min.js" defer></script>
+  <script src="../js/modernizr-2.8.3.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script> 
+  
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+        <a href=".." class="icon icon-home"> Hyperledger Fabric Study Guide</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="..">Home</a>
+                    </li>
+                </ul>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../setup/">Installation</a>
+                    </li>
+                </ul>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../morgen.net/">The morgen.net</a>
+                    </li>
+                </ul>
+                <ul class="current">
+                    <li class="toctree-l1 current"><a class="reference internal current" href="./">Nodejs SDK</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#1-general-requirements">(1) General requirements</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#2-development-set-up">(2) Development set up</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#3-general-steps">(3) General steps</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#31-project-set-up">(3.1) Project set up</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#32-get-your-application-client-identity">(3.2) Get your application client identity</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#322-enroll-the-application-user">(3.2.2) Enroll the application user</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#323-modify-the-application-users-affiliation-setting">(3.2.3) Modify the application users affiliation setting</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#3231-delete-existing-crypto-material-for-the-user">(3.2.3.1) Delete existing crypto material for the user</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#3231-modify-the-affiliation-of-the-user">(3.2.3.1) Modify the affiliation of the user</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#3232-enroll-the-user-again">(3.2.3.2) Enroll the user again</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#3233-add-the-user-to-the-wallet">(3.2.3.3) Add the user to the wallet</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#33-create-rest-api">(3.3) Create REST API</a>
+    </li>
+        </ul>
+    </li>
+    </ul>
+                    </li>
+                </ul>
+                <ul>
+                    <li class="toctree-l1"><a class="" href="../about/release-notes.md">Release Notes</a>
+                    </li>
+                </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="..">Hyperledger Fabric Study Guide</a>
+      </nav>
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="..">Docs</a> &raquo;</li>
+    
+      
+    
+    <li>Nodejs SDK</li>
+    <li class="wy-breadcrumbs-aside">
+      
+    </li>
+  </ul>
+  
+  <hr/>
+</div>
+          <div role="main">
+            <div class="section">
+              
+                <h1 id="how-to-use-the-hyperledger-fabric-node-sdk">How to use the Hyperledger Fabric Node SDK</h1>
+<p>To explain how you can use the Hyperledger Fabric Node SDK we can study the following picture to get an conceptual overview. In the picture below you can see the general building blocks of a web application which is interacting with a fabric network.</p>
+<p><img alt="Node.js SDK" src="../img/nodeJs_1.png" title="Node.js SDK" /></p>
+<h2 id="1-general-requirements">(1) General requirements</h2>
+<p>For this example, we assume the following general requirements:</p>
+<ul>
+<li>a running Hyperledger Fabric network, version 1.4.6</li>
+<li>installed and instantiated chaincode</li>
+</ul>
+<p>The set up of a fabric network and the installation of chaincode is out of the scope of this example.</p>
+<h2 id="2-development-set-up">(2) Development set up</h2>
+<p>For you local or remote development platform you need the following elements:</p>
+<ul>
+<li>an editor of your choice e.g. Visual Studio Code, Atom, Sublime, etc.</li>
+<li>a running node.js installation</li>
+<li>Node.js, version 10 is supported from 10.15.3 and higher</li>
+<li>Node.js, version 12 is supported from 12.13.1 and higher </li>
+<li>npm tool version 6 or higher</li>
+</ul>
+<h2 id="3-general-steps">(3) General steps</h2>
+<p>The general steps to develop a Node.js application for a fabric network can be summarized as:</p>
+<ol>
+<li>Create your project set up.</li>
+<li>Get your application client identity from the organization CA.</li>
+<li>receive an admin itentify from the CA to register an application client user</li>
+<li>receive an application client user from the CA</li>
+<li>Create a connection profile of the network. This is an important part we will focus later.</li>
+<li>Develop a Node.js application e.g. an REST API Service with express.js to build a bridge between the blockchain network and the frontend application. </li>
+<li>Develop a frontend application for your end users. For example with Angular or a framework of your choice. In our case we are going to use some mocha tests to interact with the REST API.</li>
+</ol>
+<h3 id="31-project-set-up">(3.1) Project set up</h3>
+<p>We create a folder where your project lives and switch into that.</p>
+<pre><code class="bash">mkdir mars-client-app
+cd mars-client-app
+</code></pre>
+
+<p>We create a npm project like in every Node.js project.</p>
+<pre><code class="bash">npm init 
+</code></pre>
+
+<p>A package.json file is created and we are good to go.</p>
+<p>As a next step we can install needed npm packages. </p>
+<blockquote>
+<p>Attention only by fabric related packages we should use a particular node_module version. This is because we are running a fabric 1.4.6 network and for that reason we should use the corresponding node_module versions.</p>
+</blockquote>
+<pre><code class="bash"># packages for the application
+npm install express --save
+npm install fabric-ca-client@1.4.8 --save
+npm install fabric-network@1.4.8 --save
+
+# packages for testing the REST API
+npm install mocha --save-dev
+npm install supertest --save-dev
+</code></pre>
+
+<p>For a better development workflow we use nodemon to restart the application if we make changes to the source-code.</p>
+<pre><code class="bash">npm install nodemon -g
+</code></pre>
+
+<p>With these steps you project set up is ready and you have all neccessary packages installed.</p>
+<h3 id="32-get-your-application-client-identity">(3.2) Get your application client identity</h3>
+<p>As we have mentioned earlier to get a valid application client identity we have to process two steps. First enroll an admin identity from your organization CA and second register (enroll) a new application itentity. If you register a new client, the enrollment process is included in that step.</p>
+<h4 id="322-enroll-the-application-user">(3.2.2) Enroll the application user</h4>
+<p>To interact with the blockchain network, we have to register and enroll an application user. The script below register the user user1 and enroll his identity to out local wallet.</p>
+<p>To enroll the application user the following approch is used.</p>
+<p>First we define some enviroment vars.</p>
+<pre><code class="bash">cd ca-mars.morgen.net
+export FABRIC_CA_CLIENT_HOME=./ca/client/admin
+export FABRIC_CA_CLIENT_TLS_CERTFILES=tls-ca-cert.pem
+</code></pre>
+
+<p>We register the new user.</p>
+<pre><code class="bash">fabric-ca-client register -d --id.name user4-mars.morgen.net --id.secret marsUserPW --id.type client -u https://0.0.0.0:7054
+</code></pre>
+
+<p>We enroll the Node.js Application from ca-mars.morgen.net.</p>
+<pre><code class="bash">export FABRIC_CA_CLIENT_MSPDIR=msp
+export FABRIC_CA_CLIENT_HOME=./users/user4-mars.morgen.net/
+export FABRIC_CA_CLIENT_TLS_CERTFILES=../../ca/client/admin/tls-ca-cert.pem
+</code></pre>
+
+<pre><code class="bash">fabric-ca-client enroll -d -u https://user4-mars.morgen.net:marsUserPW@0.0.0.0:7054
+</code></pre>
+
+<p>Add the new user to the wallet</p>
+<pre><code class="bash"># switch into the projectfolder
+cd mars-client-app
+
+# modify the add file addToWallet.js
+# call the script
+node addtoWallet.js
+User user4-mars.morgen.net successfully adding to wallet.
+</code></pre>
+
+<h4 id="323-modify-the-application-users-affiliation-setting">(3.2.3) Modify the application users affiliation setting</h4>
+<p>In case the user has wrong affiliation settings, because of the reason that the chaincode uses Attribute-Based Access Control (ABAC) to protect to ledger, we can modify the client identitity to fit this need.</p>
+<p>To do this we can follow this steps:</p>
+<ol>
+<li>delete users crypto directory under the users directory and into the wallet directory as well</li>
+<li>modify the affiliation of the user</li>
+<li>enroll the user again</li>
+<li>add the user to the application wallet again</li>
+</ol>
+<h4 id="3231-delete-existing-crypto-material-for-the-user">(3.2.3.1) Delete existing crypto material for the user</h4>
+<pre><code class="bash"># we switch into the organization folder
+cd ca-mars.morgen.net
+
+# delete the user crypto material
+rm -R users/user4-mars.morgen.net
+
+# delete the wallet data for the user
+rm -R ../app/wallet/user4-mars.morgen.net
+</code></pre>
+
+<h4 id="3231-modify-the-affiliation-of-the-user">(3.2.3.1) Modify the affiliation of the user</h4>
+<p>To access the CA we need some enviroment vars.</p>
+<pre><code class="bash">export FABRIC_CA_CLIENT_HOME=./ca/client/admin
+export FABRIC_CA_CLIENT_TLS_CERTFILES=tls-ca-cert.pem
+</code></pre>
+
+<p>We can display the current affiliation setting with the following command.</p>
+<pre><code class="bash"># check certs
+openssl x509 -noout -text -in ./users/user4-mars.morgen.net/msp/signcerts/cert.pem
+</code></pre>
+
+<p>According to our chaincode sacc-abac to have write privileges we have to member of org1.departement1.</p>
+<p>We can modify the client identity with the following command.</p>
+<pre><code class="bash">fabric-ca-client identity modify user4-mars.morgen.net --affiliation org1.department1
+</code></pre>
+
+<h4 id="3232-enroll-the-user-again">(3.2.3.2) Enroll the user again</h4>
+<pre><code class="bash">fabric-ca-client enroll -d -u https://user4-mars.morgen.net:marsUserPW@0.0.0.0:7054
+
+# check certs
+openssl x509 -noout -text -in ./users/user4-mars.morgen.net/msp/signcerts/cert.pem
+</code></pre>
+
+<h4 id="3233-add-the-user-to-the-wallet">(3.2.3.3) Add the user to the wallet</h4>
+<p>Modify the addToWallet.js script in terms of the two vars user and pkFileName.</p>
+<pre><code class="bash"># modify this variables
+let user = 'user4-mars.morgen.net'
+let pkFileName = 'the_new_pk_sk';
+</code></pre>
+
+<p>Finally call the script again.</p>
+<pre><code class="bash">node ../app/addtoWallet.js
+</code></pre>
+
+<h3 id="33-create-rest-api">(3.3) Create REST API</h3>
+<p>For our REST API we create the following file structure:</p>
+<pre><code class="bash">.
+├── addtoWallet.js
+├── connection-mars.morgen.net.json
+├── index-query.js
+├── index-set.js
+├── index.js
+├── node_modules
+├── package-lock.json
+├── package.json
+└── wallet
+</code></pre>
+              
+            </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href="../morgen.net/" class="btn btn-neutral" title="The morgen.net"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+    
+      <p>published 2020 <a href="https://twitter.com/samlinux">Roland Bole</a>.</p>
+    
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+      
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      
+      
+        <span><a href="../morgen.net/" style="color: #fcfcfc;">&laquo; Previous</a></span>
+      
+      
+    </span>
+</div>
+    <script>var base_url = '..';</script>
+    <script src="../js/theme.js" defer></script>
+      <script src="../search/main.js" defer></script>
+    <script defer>
+        window.onload = function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        };
+    </script>
+
+</body>
+</html>

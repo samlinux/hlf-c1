@@ -1,0 +1,13 @@
+version: "3.3"
+
+services:
+  mkdocs:
+    container_name: mkdocs
+    image: samlinux/mkdocs_readthedocs
+    command: sh -c 'mkdocs serve'
+    volumes:
+      - ./mkdocs.yml:/root/mkdocs.yml
+      - ./docs:/root/docs
+      - ./site:/root/site
+    ports:
+      - 8000:8000
