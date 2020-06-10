@@ -8,24 +8,24 @@
   
   
   
-  <link rel="shortcut icon" href="../img/favicon.ico">
-  <title>Nodejs SDK - Hyperledger Fabric Study Guide</title>
+  <link rel="shortcut icon" href="../../img/favicon.ico">
+  <title>How to use the Hyperledger Fabric Node SDK - Hyperledger Fabric Study Guide</title>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700" />
 
-  <link rel="stylesheet" href="../css/theme.css" />
-  <link rel="stylesheet" href="../css/theme_extra.css" />
+  <link rel="stylesheet" href="../../css/theme.css" />
+  <link rel="stylesheet" href="../../css/theme_extra.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" />
-  <link href="../css/format.css" rel="stylesheet" />
+  <link href="../../css/format.css" rel="stylesheet" />
   
   <script>
     // Current page data
-    var mkdocs_page_name = "Nodejs SDK";
-    var mkdocs_page_input_path = "nodeSdk/index.md";
+    var mkdocs_page_name = "How to use the Hyperledger Fabric Node SDK";
+    var mkdocs_page_input_path = "developer/nodeSdk/index.md";
     var mkdocs_page_url = null;
   </script>
   
-  <script src="../js/jquery-2.1.1.min.js" defer></script>
-  <script src="../js/modernizr-2.8.3.min.js" defer></script>
+  <script src="../../js/jquery-2.1.1.min.js" defer></script>
+  <script src="../../js/modernizr-2.8.3.min.js" defer></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
   <script>hljs.initHighlightingOnLoad();</script> 
   
@@ -39,9 +39,9 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
     <div class="wy-side-scroll">
       <div class="wy-side-nav-search">
-        <a href=".." class="icon icon-home"> Hyperledger Fabric Study Guide</a>
+        <a href="../.." class="icon icon-home"> Hyperledger Fabric Study Guide</a>
         <div role="search">
-  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" title="Type search term here" />
   </form>
 </div>
@@ -49,53 +49,19 @@
 
       <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
                 <ul>
-                    <li class="toctree-l1"><a class="reference internal" href="..">Home</a>
+                    <li class="toctree-l1"><a class="reference internal" href="../..">Home</a>
                     </li>
                 </ul>
                 <ul>
-                    <li class="toctree-l1"><a class="reference internal" href="../setup/">Installation</a>
+                    <li class="toctree-l1"><a class="reference internal" href="../../administrator/">Administrator Learning Path</a>
                     </li>
                 </ul>
                 <ul>
-                    <li class="toctree-l1"><a class="reference internal" href="../morgen.net/">The morgen.net</a>
-                    </li>
-                </ul>
-                <ul class="current">
-                    <li class="toctree-l1 current"><a class="reference internal current" href="./">Nodejs SDK</a>
-    <ul class="current">
-    <li class="toctree-l2"><a class="reference internal" href="#1-general-requirements">(1) General requirements</a>
-    </li>
-    <li class="toctree-l2"><a class="reference internal" href="#2-development-set-up">(2) Development set up</a>
-    </li>
-    <li class="toctree-l2"><a class="reference internal" href="#3-general-steps">(3) General steps</a>
-        <ul>
-    <li class="toctree-l3"><a class="reference internal" href="#31-project-set-up">(3.1) Project set up</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#32-get-your-application-client-identity">(3.2) Get your application client identity</a>
-        <ul>
-    <li class="toctree-l4"><a class="reference internal" href="#322-enroll-the-application-user">(3.2.2) Enroll the application user</a>
-    </li>
-    <li class="toctree-l4"><a class="reference internal" href="#323-modify-the-application-users-affiliation-setting">(3.2.3) Modify the application users affiliation setting</a>
-    </li>
-    <li class="toctree-l4"><a class="reference internal" href="#3231-delete-existing-crypto-material-for-the-user">(3.2.3.1) Delete existing crypto material for the user</a>
-    </li>
-    <li class="toctree-l4"><a class="reference internal" href="#3231-modify-the-affiliation-of-the-user">(3.2.3.1) Modify the affiliation of the user</a>
-    </li>
-    <li class="toctree-l4"><a class="reference internal" href="#3232-enroll-the-user-again">(3.2.3.2) Enroll the user again</a>
-    </li>
-    <li class="toctree-l4"><a class="reference internal" href="#3233-add-the-user-to-the-wallet">(3.2.3.3) Add the user to the wallet</a>
-    </li>
-        </ul>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#33-create-rest-api">(3.3) Create REST API</a>
-    </li>
-        </ul>
-    </li>
-    </ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../">Developer Learning Path</a>
                     </li>
                 </ul>
                 <ul>
-                    <li class="toctree-l1"><a class="" href="../about/release-notes.md">Release Notes</a>
+                    <li class="toctree-l1"><a class="reference internal" href="../../about/release-notes/">Release Notes</a>
                     </li>
                 </ul>
       </div>
@@ -107,7 +73,7 @@
       
       <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
         <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-        <a href="..">Hyperledger Fabric Study Guide</a>
+        <a href="../..">Hyperledger Fabric Study Guide</a>
       </nav>
 
       
@@ -115,11 +81,11 @@
         <div class="rst-content">
           <div role="navigation" aria-label="breadcrumbs navigation">
   <ul class="wy-breadcrumbs">
-    <li><a href="..">Docs</a> &raquo;</li>
+    <li><a href="../..">Docs</a> &raquo;</li>
     
       
     
-    <li>Nodejs SDK</li>
+    <li>How to use the Hyperledger Fabric Node SDK</li>
     <li class="wy-breadcrumbs-aside">
       
     </li>
@@ -132,7 +98,7 @@
               
                 <h1 id="how-to-use-the-hyperledger-fabric-node-sdk">How to use the Hyperledger Fabric Node SDK</h1>
 <p>To explain how you can use the Hyperledger Fabric Node SDK we can study the following picture to get an conceptual overview. In the picture below you can see the general building blocks of a web application which is interacting with a fabric network.</p>
-<p><img alt="Node.js SDK" src="../img/nodeJs_1.png" title="Node.js SDK" /></p>
+<p><img alt="Node.js SDK" src="../../img/nodeJs_1.png" title="Node.js SDK" /></p>
 <h2 id="1-general-requirements">(1) General requirements</h2>
 <p>For this example, we assume the following general requirements:</p>
 <ul>
@@ -198,7 +164,7 @@ npm install supertest --save-dev
 <p>First we define some enviroment vars.</p>
 <pre><code class="bash">cd ca-mars.morgen.net
 export FABRIC_CA_CLIENT_HOME=./ca/client/admin
-export FABRIC_CA_CLIENT_TLS_CERTFILES=tls-ca-cert.pem
+export FABRIC_CA_CLIENT_TLS_CERTFILES=ca-tls.morgen.net.cert.pem
 </code></pre>
 
 <p>We register the new user.</p>
@@ -207,11 +173,12 @@ export FABRIC_CA_CLIENT_TLS_CERTFILES=tls-ca-cert.pem
 
 <p>We enroll the Node.js Application from ca-mars.morgen.net.</p>
 <pre><code class="bash">export FABRIC_CA_CLIENT_MSPDIR=msp
-export FABRIC_CA_CLIENT_HOME=./users/user4-mars.morgen.net/
-export FABRIC_CA_CLIENT_TLS_CERTFILES=../../ca/client/admin/tls-ca-cert.pem
+export FABRIC_CA_CLIENT_HOME=./users/user1-mars.morgen.net/
+export FABRIC_CA_CLIENT_TLS_CERTFILES=../../ca/client/admin/ca-tls.morgen.net.cert.pem
 </code></pre>
 
-<pre><code class="bash">fabric-ca-client enroll -d -u https://user4-mars.morgen.net:marsUserPW@0.0.0.0:7054
+<pre><code class="bash">fabric-ca-client enroll -d -u https://user1-mars.morgen.net:marsUserPW@ca-mars.morgen.net:7054 --csr.hosts '*.mars.morgen.net'
+
 </code></pre>
 
 <p>Add the new user to the wallet</p>
@@ -296,13 +263,6 @@ let pkFileName = 'the_new_pk_sk';
           </div>
           <footer>
   
-    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-      
-        <a href="../morgen.net/" class="btn btn-neutral" title="The morgen.net"><span class="icon icon-circle-arrow-left"></span> Previous</a>
-      
-    </div>
-  
 
   <hr/>
 
@@ -327,14 +287,12 @@ let pkFileName = 'the_new_pk_sk';
     <span class="rst-current-version" data-toggle="rst-current-version">
       
       
-        <span><a href="../morgen.net/" style="color: #fcfcfc;">&laquo; Previous</a></span>
-      
       
     </span>
 </div>
-    <script>var base_url = '..';</script>
-    <script src="../js/theme.js" defer></script>
-      <script src="../search/main.js" defer></script>
+    <script>var base_url = '../..';</script>
+    <script src="../../js/theme.js" defer></script>
+      <script src="../../search/main.js" defer></script>
     <script defer>
         window.onload = function () {
             SphinxRtdTheme.Navigation.enable(true);

@@ -8,24 +8,24 @@
   
   
   
-  <link rel="shortcut icon" href="../../img/favicon.ico">
+  <link rel="shortcut icon" href="../../../img/favicon.ico">
   <title>Set up ca-mars.morgen.net - Hyperledger Fabric Study Guide</title>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700" />
 
-  <link rel="stylesheet" href="../../css/theme.css" />
-  <link rel="stylesheet" href="../../css/theme_extra.css" />
+  <link rel="stylesheet" href="../../../css/theme.css" />
+  <link rel="stylesheet" href="../../../css/theme_extra.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" />
-  <link href="../../css/format.css" rel="stylesheet" />
+  <link href="../../../css/format.css" rel="stylesheet" />
   
   <script>
     // Current page data
     var mkdocs_page_name = "Set up ca-mars.morgen.net";
-    var mkdocs_page_input_path = "morgen.net/ca-mars.morgen.net/index.md";
+    var mkdocs_page_input_path = "administrator/morgen.net/ca-mars.morgen.net/index.md";
     var mkdocs_page_url = null;
   </script>
   
-  <script src="../../js/jquery-2.1.1.min.js" defer></script>
-  <script src="../../js/modernizr-2.8.3.min.js" defer></script>
+  <script src="../../../js/jquery-2.1.1.min.js" defer></script>
+  <script src="../../../js/modernizr-2.8.3.min.js" defer></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
   <script>hljs.initHighlightingOnLoad();</script> 
   
@@ -39,9 +39,9 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
     <div class="wy-side-scroll">
       <div class="wy-side-nav-search">
-        <a href="../.." class="icon icon-home"> Hyperledger Fabric Study Guide</a>
+        <a href="../../.." class="icon icon-home"> Hyperledger Fabric Study Guide</a>
         <div role="search">
-  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+  <form id ="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" title="Type search term here" />
   </form>
 </div>
@@ -49,23 +49,19 @@
 
       <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
                 <ul>
-                    <li class="toctree-l1"><a class="reference internal" href="../..">Home</a>
+                    <li class="toctree-l1"><a class="reference internal" href="../../..">Home</a>
                     </li>
                 </ul>
                 <ul>
-                    <li class="toctree-l1"><a class="reference internal" href="../../setup/">Installation</a>
+                    <li class="toctree-l1"><a class="reference internal" href="../../">Administrator Learning Path</a>
                     </li>
                 </ul>
                 <ul>
-                    <li class="toctree-l1"><a class="reference internal" href="../">The morgen.net</a>
+                    <li class="toctree-l1"><a class="reference internal" href="../../../developer/">Developer Learning Path</a>
                     </li>
                 </ul>
                 <ul>
-                    <li class="toctree-l1"><a class="reference internal" href="../../nodeSdk/">Nodejs SDK</a>
-                    </li>
-                </ul>
-                <ul>
-                    <li class="toctree-l1"><a class="" href="../../about/release-notes.md">Release Notes</a>
+                    <li class="toctree-l1"><a class="reference internal" href="../../../about/release-notes/">Release Notes</a>
                     </li>
                 </ul>
       </div>
@@ -77,7 +73,7 @@
       
       <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
         <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-        <a href="../..">Hyperledger Fabric Study Guide</a>
+        <a href="../../..">Hyperledger Fabric Study Guide</a>
       </nav>
 
       
@@ -85,7 +81,7 @@
         <div class="rst-content">
           <div role="navigation" aria-label="breadcrumbs navigation">
   <ul class="wy-breadcrumbs">
-    <li><a href="../..">Docs</a> &raquo;</li>
+    <li><a href="../../..">Docs</a> &raquo;</li>
     
       
     
@@ -238,7 +234,7 @@ export FABRIC_CA_CLIENT_TLS_CERTFILES=ca-tls.morgen.net.cert.pem
 fabric-ca-client register -d --id.name peer0.mars.morgen.net --id.secret peer0PW --id.type peer -u https://ca-mars.morgen.net:7054 --csr.hosts 'peer0.mars.morgen.net'
 
 # peer1
-fabric-ca-client register -d --id.name peer1.mars.morgen.net --id.secret peer1PW --id.type peer -u https://ca-mars.morgen.net:7054 --csr.hosts 'peer1.mars.morgen.net'
+fabric-ca-client register -d --id.name peer1.mars.morgen.net --id.secret peer0PW --id.type peer -u https://ca-mars.morgen.net:7054 --csr.hosts 'peer1.mars.morgen.net'
 
 # an organization admin
 fabric-ca-client register -d --id.name admin-mars.morgen.net --id.secret marsAdminPW --id.type admin -u https://ca-mars.morgen.net:7054 --csr.hosts '*.mars.morgen.net'
@@ -331,8 +327,8 @@ cp ./ca/server/crypto/ca-cert.pem ./peers/peer1/assets/ca/mars.morgen.net-ca-cer
 cp ../ca-tls.morgen.net/ca/client/crypto/ca-tls.morgen.net.cert.pem ./peers/peer1/assets/tls-ca/
 </code></pre>
 
-<h4 id="324-enroll-peer0">(3.2.4) Enroll peer0</h4>
-<p>Now we can enroll peer0 from the ca-mars.morgen.net CA.</p>
+<h4 id="324-enroll-peer1">(3.2.4) Enroll peer1</h4>
+<p>Now we can enroll peer1 from the ca-mars.morgen.net CA.</p>
 <pre><code class="bash">export FABRIC_CA_CLIENT_MSPDIR=msp
 export FABRIC_CA_CLIENT_HOME=./peers/peer1/
 export FABRIC_CA_CLIENT_TLS_CERTFILES=assets/tls-ca/ca-tls.morgen.net.cert.pem
@@ -469,9 +465,9 @@ NodeOUs:
       
     </span>
 </div>
-    <script>var base_url = '../..';</script>
-    <script src="../../js/theme.js" defer></script>
-      <script src="../../search/main.js" defer></script>
+    <script>var base_url = '../../..';</script>
+    <script src="../../../js/theme.js" defer></script>
+      <script src="../../../search/main.js" defer></script>
     <script defer>
         window.onload = function () {
             SphinxRtdTheme.Navigation.enable(true);
