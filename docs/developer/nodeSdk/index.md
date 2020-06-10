@@ -2,7 +2,7 @@
 
 To explain how you can use the Hyperledger Fabric Node SDK we can study the following picture to get an conceptual overview. In the picture below you can see the general building blocks of a web application which is interacting with a fabric network.
 
-![Node.js SDK](../img/nodeJs_1.png "Node.js SDK")
+![Node.js SDK](../../img/nodeJs_1.png "Node.js SDK")
 
 
 ## (1) General requirements
@@ -77,13 +77,12 @@ To interact with the blockchain network, we have to register and enroll an appli
 
 To enroll the application user the following approch is used.
 
-
 First we define some enviroment vars.
 
 ```bash
 cd ca-mars.morgen.net
 export FABRIC_CA_CLIENT_HOME=./ca/client/admin
-export FABRIC_CA_CLIENT_TLS_CERTFILES=tls-ca-cert.pem
+export FABRIC_CA_CLIENT_TLS_CERTFILES=ca-tls.morgen.net.cert.pem
 ```
 
 We register the new user.
@@ -95,12 +94,13 @@ We enroll the Node.js Application from ca-mars.morgen.net.
 
 ```bash
 export FABRIC_CA_CLIENT_MSPDIR=msp
-export FABRIC_CA_CLIENT_HOME=./users/user4-mars.morgen.net/
-export FABRIC_CA_CLIENT_TLS_CERTFILES=../../ca/client/admin/tls-ca-cert.pem
+export FABRIC_CA_CLIENT_HOME=./users/user1-mars.morgen.net/
+export FABRIC_CA_CLIENT_TLS_CERTFILES=../../ca/client/admin/ca-tls.morgen.net.cert.pem
 ```
 
 ```bash
-fabric-ca-client enroll -d -u https://user4-mars.morgen.net:marsUserPW@0.0.0.0:7054
+fabric-ca-client enroll -d -u https://user1-mars.morgen.net:marsUserPW@ca-mars.morgen.net:7054 --csr.hosts '*.mars.morgen.net'
+
 ```
 
 Add the new user to the wallet
@@ -196,3 +196,4 @@ For our REST API we create the following file structure:
 ├── package.json
 └── wallet
 ```
+

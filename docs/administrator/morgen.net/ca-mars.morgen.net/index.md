@@ -385,13 +385,3 @@ NodeOUs:
     Certificate: cacerts/0-0-0-0-7054.pem
     OrganizationalUnitIdentifier: orderer
 ```
-
-
-
-
-
-
-
-
-
-
