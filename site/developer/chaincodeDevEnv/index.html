@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  
+  
+  <link rel="shortcut icon" href="../../img/favicon.ico">
+  <title>Chaincode development environment - Hyperledger Fabric Study Guide</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700" />
+
+  <link rel="stylesheet" href="../../css/theme.css" />
+  <link rel="stylesheet" href="../../css/theme_extra.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" />
+  <link href="../../css/format.css" rel="stylesheet" />
+  
+  <script>
+    // Current page data
+    var mkdocs_page_name = "Chaincode development environment";
+    var mkdocs_page_input_path = "developer/chaincodeDevEnv.md";
+    var mkdocs_page_url = null;
+  </script>
+  
+  <script src="../../js/jquery-2.1.1.min.js" defer></script>
+  <script src="../../js/modernizr-2.8.3.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script> 
+  
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+        <a href="../.." class="icon icon-home"> Hyperledger Fabric Study Guide</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../..">Home</a>
+                    </li>
+                </ul>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../administrator/">Administrator Learning Path</a>
+                    </li>
+                </ul>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../">Developer Learning Path</a>
+                    </li>
+                </ul>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../about/release-notes/">Release Notes</a>
+                    </li>
+                </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../..">Hyperledger Fabric Study Guide</a>
+      </nav>
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../..">Docs</a> &raquo;</li>
+    
+      
+    
+    <li>Chaincode development environment</li>
+    <li class="wy-breadcrumbs-aside">
+      
+    </li>
+  </ul>
+  
+  <hr/>
+</div>
+          <div role="main">
+            <div class="section">
+              
+                <h1 id="chaincode-development-environment">Chaincode development environment</h1>
+<p>Below you will find a chaincode development environment with screen windows.</p>
+<h2 id="create-screen-session">Create screen session</h2>
+<p>To create a named session, run the screen command with the following arguments:</p>
+<pre><code class="bash">screen -S chaincode
+</code></pre>
+
+<h3 id="create-windows">Create windows</h3>
+<p>As a next step we are going to create three windows. Notice we are in an active screen session. To create a second window we can use the command:</p>
+<pre><code class="bash">CTRL + a c
+</code></pre>
+
+<p>With CTRL + a you will come to a kind of "cmd modus" where you can start several commands. E.g c for a new window. Notice that this command has actually two commands. The CTRL + a command and c.</p>
+<p>To create a third window we can use the command again:</p>
+<pre><code class="bash">CTRL + a c
+</code></pre>
+
+<p>To check if all three windows are ready use the comman:</p>
+<pre><code class="bash">CTRL + a &quot;
+</code></pre>
+
+<p>As a next step we can rename the three windows from bash to what it does. Jump to window 0.</p>
+<pre><code class="bash">CTRL + a 0
+</code></pre>
+
+<p>Now we can rename the window. To rename the window use the command:</p>
+<pre><code class="bash">CTRL + a A
+
+#type the name: start the network
+</code></pre>
+
+<p>Jump to window 1.</p>
+<pre><code class="bash">CTRL + a 1
+</code></pre>
+
+<p>Now we can rename the window. To rename the window use the command:</p>
+<pre><code class="bash">CTRL + a A
+
+#type the name: build &amp; start the chaincode
+</code></pre>
+
+<p>Jump to window 2.</p>
+<pre><code class="bash">CTRL + a 2
+</code></pre>
+
+<p>Now we can rename the window. To rename the window use the command:</p>
+<pre><code class="bash">CTRL + a A
+
+#type the name: use the chaincode
+</code></pre>
+
+<p>Check your windows names with the command.</p>
+<pre><code class="bash">CTRL + a &quot;
+</code></pre>
+
+<h3 id="create-split-view">Create split view</h3>
+<p>Switch to window 0.</p>
+<pre><code class="bash">CTRL + a 0
+</code></pre>
+
+<p>Split the window horizontally.</p>
+<pre><code class="bash">CTRL + S
+</code></pre>
+
+<p>Now you can see two screens, one with the name 0 start the network and a second one unnamed. Now we switch to the second region with the command and link window 1 to that region.</p>
+<pre><code class="bash">CTRL + a [Tab] (= tab key)
+# now you see the course in the second view.
+
+# now link the second split view to window 1 with the command.
+CTRL + a 1
+</code></pre>
+
+<p>Split the window horizontally again and link window 2 to that region.</p>
+<pre><code class="bash"># split the screen again
+CTRL + S
+
+# link the third window to that region
+CTRL + a 2 
+</code></pre>
+
+<p>Now you should have one session with three named regions.</p>
+<h3 id="start-the-environment">Start the environment</h3>
+<p>Switch to region 1 named 0 start the network</p>
+<pre><code class="bash"># switch back 
+CTRL + tab
+
+# start the network
+docker-compose -f docker-compose-simple.yaml up
+</code></pre>
+
+<h3 id="build-the-chaincode">Build the chaincode</h3>
+<p>Switch to the second region with the command.</p>
+<pre><code class="bash">CTRL + a 1 
+</code></pre>
+
+<p>To build the chaincode you have to check the $GOPATH environment variable and you should have cloned the fabric git repo with the proper release. In my case I use the release 1.4.</p>
+<p>Do this for only for the first time.</p>
+<pre><code class="bash">export GOPATH=/root/fabric
+cd /root/fabric
+mkdir -p src/github.com/hyperledger
+cd src/github.com/hyperledger
+
+git clone -b release-1.4 https://github.com/hyperledger/fabric.git
+</code></pre>
+
+<p>To build the chaincode you have to switch into the chaincode container.</p>
+<pre><code class="bash"># switch into the chaincode container
+docker exec -it chaincode bash
+
+# switch into the chaincode folder
+cd chaincode/sacc
+
+# build the chaincode
+go build
+
+# check the result
+# you should see the go binary file.
+ls -l
+</code></pre>
+
+<p>Now you can run the chaincode:</p>
+<pre><code class="bash">CORE_PEER_ADDRESS=peer:7052 CORE_CHAINCODE_ID_NAME=mycc:0 ./sacc
+</code></pre>
+
+<h3 id="use-the-chaincode">Use the chaincode</h3>
+<p>Switch to region 3.</p>
+<pre><code class="bash">CTRL + a tab
+</code></pre>
+
+<p>Switch into the cli container to use the chaincode.</p>
+<pre><code class="bash">docker exec -it cli bash
+cd /opt/gopath/src
+</code></pre>
+
+<p>Install and instantiate the chaincode.</p>
+<pre><code class="bash">peer chaincode install -p chaincodedev/chaincode/sacc -n mycc -v 0
+peer chaincode instantiate -n mycc -v 0 -c '{&quot;Args&quot;:[&quot;a&quot;,&quot;10&quot;]}' -C myc
+</code></pre>
+
+<p>Invoke the chaincode.</p>
+<pre><code class="bash">peer chaincode invoke -n mycc -c '{&quot;Args&quot;:[&quot;set&quot;, &quot;a&quot;, &quot;20&quot;]}' -C myc
+</code></pre>
+
+<p>Query the chaincode.</p>
+<pre><code class="bash">peer chaincode query -n mycc -c '{&quot;Args&quot;:[&quot;query&quot;,&quot;a&quot;]}' -C myc
+</code></pre>
+
+<h2 id="leave-the-screen-session">Leave the screen session</h2>
+<p>To leave the current screen session detach from it.</p>
+<pre><code class="bash">CTRL + a d
+</code></pre>
+
+<h2 id="reattach-to-the-screen-session">Reattach to the screen session</h2>
+<p>To resume your screen session use the following command.</p>
+<pre><code class="bash">screen -r
+</code></pre>
+
+<h2 id="kill-the-screen-session">Kill the screen session</h2>
+<pre><code class="bash"># shows existing screen session - you need the name of the session
+screen -ls
+
+# kill the session per name
+screen -S 22104.chaincode -p 0 -X quit
+</code></pre>
+              
+            </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+    
+      <p>published 2020 <a href="https://twitter.com/samlinux">Roland Bole</a>.</p>
+    
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+      
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      
+      
+      
+    </span>
+</div>
+    <script>var base_url = '../..';</script>
+    <script src="../../js/theme.js" defer></script>
+      <script src="../../search/main.js" defer></script>
+    <script defer>
+        window.onload = function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        };
+    </script>
+
+</body>
+</html>
