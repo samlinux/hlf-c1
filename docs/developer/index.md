@@ -4,10 +4,9 @@ The following is a frist approch to develop a learning path for a Hyperledger Fa
 ## Client Application Development
 
 - [Develop a Blockchain Application](./developAnApplication.md)
+- [How to use the Hyperledger Fabric Node SDK](./nodeSdk/index.md)
+- [Listen to HLF events with node.js](./eventListening.md)
 
-## How to use the Hyperledger Fabric Node SDK
-- [Overview](./nodeSdk/index.md)
- 
 ## Chaincode Development
 
 ### Chaincode Development Environment
