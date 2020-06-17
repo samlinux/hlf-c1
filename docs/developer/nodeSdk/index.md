@@ -2,7 +2,7 @@
 
 To explain how you can use the Hyperledger Fabric Node SDK we can study the following picture to get an conceptual overview. In the picture below you can see the general building blocks of a web application which is interacting with a fabric network.
 
-![Node.js SDK](../../img/nodeJs_1.png "Node.js SDK")
+![Node.js SDK](../../img/ApplicationFlow.png "Node.js SDK")
 
 
 ## (1) General requirements

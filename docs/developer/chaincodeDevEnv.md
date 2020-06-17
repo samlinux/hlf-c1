@@ -1,104 +1,50 @@
 # Chaincode development environment
-Below you will find a chaincode development environment with screen windows.
+Below you will find a chaincode development environment with tmux. For more commands see the <a href="https://tmuxcheatsheet.com/?q=&hPP=100&idx=tmux_cheats&p=0&is_v=1" target="_blank">cheatsheet</a>.
 
-## Create screen session
-To create a named session, run the screen command with the following arguments:
+
+
+## Create a tmux session
+To create a named session, run the tmux command with the following arguments:
 ```bash
-screen -S chaincode
-```
-
-### Create windows
-As a next step we are going to create three windows. Notice we are in an active screen session. To create a second window we can use the command:
-```bash
-CTRL + a c
-```
-With CTRL + a you will come to a kind of "cmd modus" where you can start several commands. E.g c for a new window. Notice that this command has actually two commands. The CTRL + a command and c.
-
-To create a third window we can use the command again:
-```bash 
-CTRL + a c
-```
-
-To check if all three windows are ready use the comman:
-```bash 
-CTRL + a "
-```
-
-As a next step we can rename the three windows from bash to what it does. Jump to window 0.
-```bash
-CTRL + a 0
-```
-
-Now we can rename the window. To rename the window use the command:
-```bash 
-CTRL + a A
-
-#type the name: start the network
-```
-
-Jump to window 1.
-```bash
-CTRL + a 1
-```
-
-Now we can rename the window. To rename the window use the command:
-```bash 
-CTRL + a A
-
-#type the name: build & start the chaincode
-```
-
-Jump to window 2.
-```bash
-CTRL + a 2
-```
-
-Now we can rename the window. To rename the window use the command:
-```bash 
-CTRL + a A
-
-#type the name: use the chaincode
-```
-
-Check your windows names with the command.
-```bash 
-CTRL + a "
+tmux new -s fabric
 ```
  
-### Create split view
-Switch to window 0.
+### Create a split view
+Split pane horizontally
 ```bash 
-CTRL + a 0
+CTRL + b "
 ``` 
 
-Split the window horizontally.
-```bash
-CTRL + S
-```
-Now you can see two screens, one with the name 0 start the network and a second one unnamed. Now we switch to the second region with the command and link window 1 to that region.
+Split pane vertically
 ```bash 
-CTRL + a [Tab] (= tab key)
-# now you see the course in the second view.
-
-# now link the second split view to window 1 with the command.
-CTRL + a 1
+CTRL + b %
 ``` 
 
-Split the window horizontally again and link window 2 to that region.
+Now you can see two panels. Now we switch to the second panel.
+```bash 
+# jump to second panel (watch the numbers after q)
+CTRL + b q 1
+
+# jump the first panel if you want
+CTRL + b q 0
+``` 
+
+Split the second panel horizontally again.
 ```bash
 # split the screen again
-CTRL + S
-
-# link the third window to that region
-CTRL + a 2 
+CTRL + b "
 ```
-Now you should have one session with three named regions.
+Now you should have one session with three panels.
+
+Spread the panels evenly.
+```bash
+CTRL + b [space]
+```
 
 ### Start the environment
-Switch to region 1 named 0 start the network
+Switch to panel 0. Make sure you are into the directory fabric-samples/chaincode-dev-docker.
 ```bash
-# switch back 
-CTRL + tab
+CTRL + b q 0
 
 # start the network
 docker-compose -f docker-compose-simple.yaml up
@@ -107,7 +53,7 @@ docker-compose -f docker-compose-simple.yaml up
 ### Build the chaincode
 Switch to the second region with the command.
 ```bash 
-CTRL + a 1 
+CTRL + b q 1 
 ```
 
 To build the chaincode you have to check the $GOPATH environment variable and you should have cloned the fabric git repo with the proper release. In my case I use the release 1.4.
@@ -146,9 +92,9 @@ CORE_PEER_ADDRESS=peer:7052 CORE_CHAINCODE_ID_NAME=mycc:0 ./sacc
 ```
 
 ### Use the chaincode
-Switch to region 3.
+Switch to panel three.
 ```bash 
-CTRL + a tab
+CTRL + b q 2
 ``` 
 
 Switch into the cli container to use the chaincode.
@@ -176,20 +122,20 @@ peer chaincode query -n mycc -c '{"Args":["query","a"]}' -C myc
 ## Leave the screen session
 To leave the current screen session detach from it.
 ```bash 
-CTRL + a d
+CTRL + b d
 ```
 
 ## Reattach to the screen session
 To resume your screen session use the following command.
 ```bash 
-screen -r
+tmux attach -t 0
 ```
 
 ## Kill the screen session
 ```bash
 # shows existing screen session - you need the name of the session
-screen -ls
+tmux -ls
 
 # kill the session per name
-screen -S 22104.chaincode -p 0 -X quit
+tmux kill-session -a -t mysession
 ```
