@@ -1,4 +1,6 @@
-# Chaincode development environment
+# Chaincode Development Environment
+(chaincode-docker-devmode)
+
 Below you will find a chaincode development environment with tmux. For more commands see the <a href="https://tmuxcheatsheet.com/?q=&hPP=100&idx=tmux_cheats&p=0&is_v=1" target="_blank">cheatsheet</a>.
 
 ## Create a tmux session
