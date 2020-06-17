@@ -7,8 +7,7 @@ The following is a frist approch to develop a learning path for a Hyperledger Fa
 - [Listen to HLF events with node.js](./eventListening.md)
 
 ## Chaincode Development
-### Chaincode Development Environment
-- [Chaincode dev environment](./chaincodeDevEnv.md)
+- [Chaincode Development Environment](./chaincodeDevEnv.md)
 
 ### Chaincode Basics
 
