@@ -1,8 +1,6 @@
 # Chaincode development environment
 Below you will find a chaincode development environment with tmux. For more commands see the <a href="https://tmuxcheatsheet.com/?q=&hPP=100&idx=tmux_cheats&p=0&is_v=1" target="_blank">cheatsheet</a>.
 
-
-
 ## Create a tmux session
 To create a named session, run the tmux command with the following arguments:
 ```bash
@@ -119,19 +117,19 @@ Query the chaincode.
 peer chaincode query -n mycc -c '{"Args":["query","a"]}' -C myc
 ```
 
-## Leave the screen session
+## Leave the tmux session
 To leave the current screen session detach from it.
 ```bash 
 CTRL + b d
 ```
 
-## Reattach to the screen session
+## Reattach to the tmux session
 To resume your screen session use the following command.
 ```bash 
 tmux attach -t 0
 ```
 
-## Kill the screen session
+## Kill the tmux session
 ```bash
 # shows existing screen session - you need the name of the session
 tmux -ls
