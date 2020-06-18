@@ -42,13 +42,41 @@ CTRL + b [space]
 ```
 
 ### Start the environment
-Switch to panel 0. Make sure you are into the directory fabric-samples/chaincode-dev-docker.
+Switch to panel 0. Make sure you are into the directory fabric-samples/chaincode-dev-docker. 
 ```bash
 CTRL + b q 0
 
 # start the network
 docker-compose -f docker-compose-simple.yaml up
 ```
+
+Notice: The docker-compose-simple.yaml file does not include a couchDb container. If you are going to use couchDb releated topics with this environment you have to modify the docker-compose file.
+
+Add the following to your docker-compose file.
+
+```bash
+couchdb:
+  container_name: couchdb
+  image: hyperledger/fabric-couchdb:0.4.18
+  # Populate the COUCHDB_USER and COUCHDB_PASSWORD to set an admin user and password
+  # for CouchDB.  This will prevent CouchDB from operating in an "Admin Party" mode.
+  environment:
+    - COUCHDB_USER=admin
+    - COUCHDB_PASSWORD=password
+  # Comment/Uncomment the port mapping if you want to hide/expose the CouchDB service,
+  # for example map it to utilize Fauxton User Interface in dev environments.
+  ports:
+    - "5984:5984"
+```
+
+And under the peer service in this docker-compose file add the following and start your network again.
+```bash
+  - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
+  - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=admin
+  - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=password
+  - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb:5984
+```
+
 
 ### Build the chaincode
 Switch to the second region with the command.
@@ -123,6 +151,15 @@ peer chaincode query -n mycc -c '{"Args":["query","a"]}' -C myc
 To leave the current screen session detach from it.
 ```bash 
 CTRL + b d
+```
+## List all tmux sessions
+```bash 
+tmux ls
+```
+
+## Rename the tmux session
+```bash 
+tmux rename-session -t [oldname] [newname]
 ```
 
 ## Reattach to the tmux session
