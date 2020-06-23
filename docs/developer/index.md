@@ -8,6 +8,7 @@ The following is a frist approch to develop a learning path for a Hyperledger Fa
 
 ## Chaincode Development
 - [Chaincode Development Environment (chaincode-dev-docker)](./chaincodeDevEnv.md)
+- [Install/Upgrade Chaincode](./installUpgradeChaincode.md)
 
 ### Chaincode Basics
 

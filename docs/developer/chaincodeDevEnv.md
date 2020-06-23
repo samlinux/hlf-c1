@@ -176,3 +176,9 @@ tmux -ls
 # kill the session per name
 tmux kill-session -a -t mysession
 ```
+
+## Scroll inside panel (Mac version)
+To scroll inside of a panel use the following command.
+```bash 
+CTRL + b fn + up || down
+```
