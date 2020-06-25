@@ -9,7 +9,7 @@
   
   
   <link rel="shortcut icon" href="../../img/favicon.ico">
-  <title>Chaincode development environment - Hyperledger Fabric Study Guide</title>
+  <title>Chaincode Development Environment - Hyperledger Fabric Study Guide</title>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700" />
 
   <link rel="stylesheet" href="../../css/theme.css" />
@@ -19,7 +19,7 @@
   
   <script>
     // Current page data
-    var mkdocs_page_name = "Chaincode development environment";
+    var mkdocs_page_name = "Chaincode Development Environment";
     var mkdocs_page_input_path = "developer/chaincodeDevEnv.md";
     var mkdocs_page_url = null;
   </script>
@@ -53,11 +53,11 @@
                     </li>
                 </ul>
                 <ul>
-                    <li class="toctree-l1"><a class="reference internal" href="../../administrator/">Administrator Learning Path</a>
+                    <li class="toctree-l1"><a class="reference internal" href="../">Developer Learning Path</a>
                     </li>
                 </ul>
                 <ul>
-                    <li class="toctree-l1"><a class="reference internal" href="../">Developer Learning Path</a>
+                    <li class="toctree-l1"><a class="reference internal" href="../../administrator/">Administrator Learning Path</a>
                     </li>
                 </ul>
                 <ul>
@@ -85,7 +85,7 @@
     
       
     
-    <li>Chaincode development environment</li>
+    <li>Chaincode Development Environment</li>
     <li class="wy-breadcrumbs-aside">
       
     </li>
@@ -96,99 +96,75 @@
           <div role="main">
             <div class="section">
               
-                <h1 id="chaincode-development-environment">Chaincode development environment</h1>
-<p>Below you will find a chaincode development environment with screen windows.</p>
-<h2 id="create-screen-session">Create screen session</h2>
-<p>To create a named session, run the screen command with the following arguments:</p>
-<pre><code class="bash">screen -S chaincode
+                <h1 id="chaincode-development-environment">Chaincode Development Environment</h1>
+<p>(chaincode-docker-devmode)</p>
+<p>Below you will find a chaincode development environment with tmux. For more commands see the <a href="https://tmuxcheatsheet.com/?q=&hPP=100&idx=tmux_cheats&p=0&is_v=1" target="_blank">cheatsheet</a>.</p>
+<h2 id="create-a-tmux-session">Create a tmux session</h2>
+<p>To create a named session, run the tmux command with the following arguments:</p>
+<pre><code class="bash">tmux new -s fabric
 </code></pre>
 
-<h3 id="create-windows">Create windows</h3>
-<p>As a next step we are going to create three windows. Notice we are in an active screen session. To create a second window we can use the command:</p>
-<pre><code class="bash">CTRL + a c
+<h3 id="create-a-split-view">Create a split view</h3>
+<p>Split pane horizontally</p>
+<pre><code class="bash">CTRL + b &quot;
 </code></pre>
 
-<p>With CTRL + a you will come to a kind of "cmd modus" where you can start several commands. E.g c for a new window. Notice that this command has actually two commands. The CTRL + a command and c.</p>
-<p>To create a third window we can use the command again:</p>
-<pre><code class="bash">CTRL + a c
+<p>Split pane vertically</p>
+<pre><code class="bash">CTRL + b %
 </code></pre>
 
-<p>To check if all three windows are ready use the comman:</p>
-<pre><code class="bash">CTRL + a &quot;
+<p>Now you can see two panels. Now we switch to the second panel.</p>
+<pre><code class="bash"># jump to second panel (watch the numbers after q)
+CTRL + b q 1
+
+# jump the first panel if you want
+CTRL + b q 0
 </code></pre>
 
-<p>As a next step we can rename the three windows from bash to what it does. Jump to window 0.</p>
-<pre><code class="bash">CTRL + a 0
-</code></pre>
-
-<p>Now we can rename the window. To rename the window use the command:</p>
-<pre><code class="bash">CTRL + a A
-
-#type the name: start the network
-</code></pre>
-
-<p>Jump to window 1.</p>
-<pre><code class="bash">CTRL + a 1
-</code></pre>
-
-<p>Now we can rename the window. To rename the window use the command:</p>
-<pre><code class="bash">CTRL + a A
-
-#type the name: build &amp; start the chaincode
-</code></pre>
-
-<p>Jump to window 2.</p>
-<pre><code class="bash">CTRL + a 2
-</code></pre>
-
-<p>Now we can rename the window. To rename the window use the command:</p>
-<pre><code class="bash">CTRL + a A
-
-#type the name: use the chaincode
-</code></pre>
-
-<p>Check your windows names with the command.</p>
-<pre><code class="bash">CTRL + a &quot;
-</code></pre>
-
-<h3 id="create-split-view">Create split view</h3>
-<p>Switch to window 0.</p>
-<pre><code class="bash">CTRL + a 0
-</code></pre>
-
-<p>Split the window horizontally.</p>
-<pre><code class="bash">CTRL + S
-</code></pre>
-
-<p>Now you can see two screens, one with the name 0 start the network and a second one unnamed. Now we switch to the second region with the command and link window 1 to that region.</p>
-<pre><code class="bash">CTRL + a [Tab] (= tab key)
-# now you see the course in the second view.
-
-# now link the second split view to window 1 with the command.
-CTRL + a 1
-</code></pre>
-
-<p>Split the window horizontally again and link window 2 to that region.</p>
+<p>Split the second panel horizontally again.</p>
 <pre><code class="bash"># split the screen again
-CTRL + S
-
-# link the third window to that region
-CTRL + a 2 
+CTRL + b &quot;
 </code></pre>
 
-<p>Now you should have one session with three named regions.</p>
+<p>Now you should have one session with three panels.</p>
+<p>Spread the panels evenly.</p>
+<pre><code class="bash">CTRL + b [space]
+</code></pre>
+
 <h3 id="start-the-environment">Start the environment</h3>
-<p>Switch to region 1 named 0 start the network</p>
-<pre><code class="bash"># switch back 
-CTRL + tab
+<p>Switch to panel 0. Make sure you are into the directory fabric-samples/chaincode-dev-docker. </p>
+<pre><code class="bash">CTRL + b q 0
 
 # start the network
 docker-compose -f docker-compose-simple.yaml up
 </code></pre>
 
+<p>Notice: The docker-compose-simple.yaml file does not include a couchDb container. If you are going to use couchDb releated topics with this environment you have to modify the docker-compose file.</p>
+<p>Add the following to your docker-compose file.</p>
+<pre><code class="bash">couchdb:
+  container_name: couchdb
+  image: hyperledger/fabric-couchdb:0.4.18
+  # Populate the COUCHDB_USER and COUCHDB_PASSWORD to set an admin user and password
+  # for CouchDB.  This will prevent CouchDB from operating in an &quot;Admin Party&quot; mode.
+  environment:
+    - COUCHDB_USER=admin
+    - COUCHDB_PASSWORD=password
+  # Comment/Uncomment the port mapping if you want to hide/expose the CouchDB service,
+  # for example map it to utilize Fauxton User Interface in dev environments.
+  ports:
+    - &quot;5984:5984&quot;
+</code></pre>
+
+<p>And under the peer service in this docker-compose file add the following and start your network again.</p>
+<pre><code class="bash">  - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
+  - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=admin
+  - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=password
+  - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb:5984
+</code></pre>
+
 <h3 id="build-the-chaincode">Build the chaincode</h3>
 <p>Switch to the second region with the command.</p>
-<pre><code class="bash">CTRL + a 1 
+<pre><code class="bash">CTRL + b q 1 
 </code></pre>
 
 <p>To build the chaincode you have to check the $GOPATH environment variable and you should have cloned the fabric git repo with the proper release. In my case I use the release 1.4.</p>
@@ -221,8 +197,8 @@ ls -l
 </code></pre>
 
 <h3 id="use-the-chaincode">Use the chaincode</h3>
-<p>Switch to region 3.</p>
-<pre><code class="bash">CTRL + a tab
+<p>Switch to panel three.</p>
+<pre><code class="bash">CTRL + b q 2
 </code></pre>
 
 <p>Switch into the cli container to use the chaincode.</p>
@@ -243,22 +219,35 @@ peer chaincode instantiate -n mycc -v 0 -c '{&quot;Args&quot;:[&quot;a&quot;,&qu
 <pre><code class="bash">peer chaincode query -n mycc -c '{&quot;Args&quot;:[&quot;query&quot;,&quot;a&quot;]}' -C myc
 </code></pre>
 
-<h2 id="leave-the-screen-session">Leave the screen session</h2>
+<h2 id="leave-the-tmux-session">Leave the tmux session</h2>
 <p>To leave the current screen session detach from it.</p>
-<pre><code class="bash">CTRL + a d
+<pre><code class="bash">CTRL + b d
 </code></pre>
 
-<h2 id="reattach-to-the-screen-session">Reattach to the screen session</h2>
+<h2 id="list-all-tmux-sessions">List all tmux sessions</h2>
+<pre><code class="bash">tmux ls
+</code></pre>
+
+<h2 id="rename-the-tmux-session">Rename the tmux session</h2>
+<pre><code class="bash">tmux rename-session -t [oldname] [newname]
+</code></pre>
+
+<h2 id="reattach-to-the-tmux-session">Reattach to the tmux session</h2>
 <p>To resume your screen session use the following command.</p>
-<pre><code class="bash">screen -r
+<pre><code class="bash">tmux attach -t 0
 </code></pre>
 
-<h2 id="kill-the-screen-session">Kill the screen session</h2>
+<h2 id="kill-the-tmux-session">Kill the tmux session</h2>
 <pre><code class="bash"># shows existing screen session - you need the name of the session
-screen -ls
+tmux -ls
 
 # kill the session per name
-screen -S 22104.chaincode -p 0 -X quit
+tmux kill-session -a -t mysession
+</code></pre>
+
+<h2 id="scroll-inside-panel-mac-version">Scroll inside panel (Mac version)</h2>
+<p>To scroll inside of a panel use the following command.</p>
+<pre><code class="bash">CTRL + b fn + up || down
 </code></pre>
               
             </div>

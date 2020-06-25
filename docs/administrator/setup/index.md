@@ -15,7 +15,7 @@ The following steps are required to prepare the Droplet.
 apt update && apt upgrade
 
 # install some useful helpers
-apt install tree
+apt install tree htop
 
 # it's always good the use the right time
 # so setup the correct timezone

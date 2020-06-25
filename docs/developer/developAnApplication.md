@@ -1,6 +1,6 @@
 # Develop a Blockchain Application
 
-- [Hyperledger Fabric SDK for node.js 1.4](https://hyperledger.github.io/fabric-sdk-node/release-1.4/module-fabric-network.html)
+<a href="https://hyperledger.github.io/fabric-sdk-node/release-1.4/module-fabric-network.html" target="_blank">Hyperledger Fabric SDK for Node.js 1.4</a>
 
 To develop a blockchain application in the field of Hyperleder Fabric these are the required steps regarding the offical hyperledger fabric documentation.
 
@@ -12,13 +12,13 @@ To develop a blockchain application in the field of Hyperleder Fabric these are 
 6. How to submit a transaction
 7. How to process a transaction response
 
-## (1) The application flow
+## The Application Flow
 
 An application has to follow six basic steps to submit a transaction:
 
-- Select an identity from a wallet
-- Connect to a gateway
-- Access the desired network
-- Construct a transaction request for a smart contract
-- Submit the transaction to the network
-- Process the response
+1. Select an identity from a wallet
+2. Connect to a gateway
+3. Access the desired network
+4. Construct a transaction request for a smart contract
+5. Submit the transaction to the network
+6. Process the response
