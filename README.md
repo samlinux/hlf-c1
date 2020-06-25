@@ -1,5 +1,4 @@
-# hlf-c1
-Hyperleder fabric course material c1
+# hlf-c1 - Hyperleder Fabric course material
 
 ## Start ReadTheDocs preview
 ```bash
@@ -12,21 +11,25 @@ docker-compose up
 # open your browser 
 http://localhost:8000
 
+```
 
+## Build the docs
+```bash 
 # if your work is done, build the site
 docker exec -it mkdocs mkdocs build
 
+```
+
+## Commit the docs to the local repo
+```bash 
 # add, commit and push your work
 git add .
 git commit -m "text" 
-git push
+```
 
-# on pandora switch to docker/hsc
-# checkout the new version for public access
-# for https://hsc.samlinux.at
-
-git pull
-
+## Push the docs to github/samlinux and publish it on hsc.samlinux.at
+```bash
+./build.sh
 ```
 
 [Start reading](./docs/index.md)
