@@ -6,94 +6,92 @@ To do so, we create the following two scripts in a new directory. The first scri
 # create a new directory under the fabric-samples
 cd $HOME/fabric/fabric-samples
 mkdir rb-test-network && cd rb-test-network
-touch start.sh stop.sh
+touch start.sh stop.sh addCC.sh
 .
+├── addCC.sh
 ├── start.sh
 └── stop.sh
-
 ```
 
-The start.sh script is used to start the network, install the chaincode on peer0 for both organizations.
+- The start.sh script is used to start the network, install the chaincode on peer0 for both organizations.
+- The stop.sh script is used to stop and clean up the network.
+- The addCC.sh script ist used to add an further chaincode to the running network.
 
+Add the following to the start.sh script.
 ```bash 
 #!/bin/bash
 # Exit on first error
 set -e
 
-# replace the channel name
 CC_CHANNEL_NAME=channel1
-
-# replace the chaincode name
 CC_NAME=sacc
-
-# replace to path ro the chaincode
-# you can find this path under fabric_samples/chaincode/....
 CC_SRC_PATH=github.com/chaincode/sacc
 
-# start the network with CAs but without installing the default chaincode
-cd ../first-network
-echo y | ./byfn.sh down
-echo y | ./byfn.sh up -a -n -c $CC_CHANNEL_NAME
+startNetworkWithChaincode() {
+  cd ../first-network
+  echo y | ./byfn.sh down
+  echo y | ./byfn.sh up -a -n -c $CC_CHANNEL_NAME
 
-# we set needed environment vars
-CONFIG_ROOT=/opt/gopath/src/github.com/hyperledger/fabric/peer
-ORG1_MSPCONFIGPATH=${CONFIG_ROOT}/crypto/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp
-ORG1_TLS_ROOTCERT_FILE=${CONFIG_ROOT}/crypto/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/ca.crt
-ORG2_MSPCONFIGPATH=${CONFIG_ROOT}/crypto/peerOrganizations/org2.example.com/users/Admin@org2.example.com/msp
-ORG2_TLS_ROOTCERT_FILE=${CONFIG_ROOT}/crypto/peerOrganizations/org2.example.com/peers/peer0.org2.example.com/tls/ca.crt
-ORDERER_TLS_ROOTCERT_FILE=${CONFIG_ROOT}/crypto/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem
+  CONFIG_ROOT=/opt/gopath/src/github.com/hyperledger/fabric/peer
+  ORG1_MSPCONFIGPATH=${CONFIG_ROOT}/crypto/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp
+  ORG1_TLS_ROOTCERT_FILE=${CONFIG_ROOT}/crypto/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/ca.crt
+  ORG2_MSPCONFIGPATH=${CONFIG_ROOT}/crypto/peerOrganizations/org2.example.com/users/Admin@org2.example.com/msp
+  ORG2_TLS_ROOTCERT_FILE=${CONFIG_ROOT}/crypto/peerOrganizations/org2.example.com/peers/peer0.org2.example.com/tls/ca.crt
+  ORDERER_TLS_ROOTCERT_FILE=${CONFIG_ROOT}/crypto/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem
 
-# print commands and their arguments as they are executed
-set -x
+  set -x
 
-echo "Installing smart contract: $CC_NAME on peer0.org1.example.com"
-docker exec \
-  -e CORE_PEER_LOCALMSPID=Org1MSP \
-  -e CORE_PEER_ADDRESS=peer0.org1.example.com:7051 \
-  -e CORE_PEER_MSPCONFIGPATH=${ORG1_MSPCONFIGPATH} \
-  -e CORE_PEER_TLS_ROOTCERT_FILE=${ORG1_TLS_ROOTCERT_FILE} \
-  cli \
-  peer chaincode install \
-    -n "$CC_NAME" \
-    -v 1.0 \
-    -p "$CC_SRC_PATH"
+  echo "Installing smart contract: $CC_NAME on peer0.org1.example.com"
+  docker exec \
+    -e CORE_PEER_LOCALMSPID=Org1MSP \
+    -e CORE_PEER_ADDRESS=peer0.org1.example.com:7051 \
+    -e CORE_PEER_MSPCONFIGPATH=${ORG1_MSPCONFIGPATH} \
+    -e CORE_PEER_TLS_ROOTCERT_FILE=${ORG1_TLS_ROOTCERT_FILE} \
+    cli \
+    peer chaincode install \
+      -n "$CC_NAME" \
+      -v 1.0 \
+      -p "$CC_SRC_PATH" 
 
-echo "Installing smart contract: $CC_NAME on peer0.org2.example.com"
-docker exec \
-  -e CORE_PEER_LOCALMSPID=Org2MSP \
-  -e CORE_PEER_ADDRESS=peer0.org2.example.com:9051 \
-  -e CORE_PEER_MSPCONFIGPATH=${ORG2_MSPCONFIGPATH} \
-  -e CORE_PEER_TLS_ROOTCERT_FILE=${ORG2_TLS_ROOTCERT_FILE} \
-  cli \
-  peer chaincode install \
-    -n "$CC_NAME" \
-    -v 1.0 \
-    -p "$CC_SRC_PATH"
+  echo "Installing smart contract: $CC_NAME on peer0.org2.example.com"
+  docker exec \
+    -e CORE_PEER_LOCALMSPID=Org2MSP \
+    -e CORE_PEER_ADDRESS=peer0.org2.example.com:9051 \
+    -e CORE_PEER_MSPCONFIGPATH=${ORG2_MSPCONFIGPATH} \
+    -e CORE_PEER_TLS_ROOTCERT_FILE=${ORG2_TLS_ROOTCERT_FILE} \
+    cli \
+    peer chaincode install \
+      -n "$CC_NAME" \
+      -v 1.0 \
+      -p "$CC_SRC_PATH" 
 
-echo "Instantiating smart contract: $CC_NAME on $CC_CHANNEL_NAME"
-docker exec \
-  -e CORE_PEER_LOCALMSPID=Org1MSP \
-  -e CORE_PEER_MSPCONFIGPATH=${ORG1_MSPCONFIGPATH} \
-  cli \
-  peer chaincode instantiate \
-    -o orderer.example.com:7050 \
-    -C $CC_CHANNEL_NAME \
-    -n $CC_NAME \
-    -v 1.0 \
-    -c '{"Args":["msg","hello blockchain"]}' \
-    -P "AND('Org1MSP.member','Org2MSP.member')" \
-    --tls \
-    --cafile ${ORDERER_TLS_ROOTCERT_FILE} \
-    --peerAddresses peer0.org1.example.com:7051 \
-    --tlsRootCertFiles ${ORG1_TLS_ROOTCERT_FILE}
+  echo "Instantiating smart contract: $CC_NAME on $CC_CHANNEL_NAME"
+  docker exec \
+    -e CORE_PEER_LOCALMSPID=Org1MSP \
+    -e CORE_PEER_MSPCONFIGPATH=${ORG1_MSPCONFIGPATH} \
+    cli \
+    peer chaincode instantiate \
+      -o orderer.example.com:7050 \
+      -C $CC_CHANNEL_NAME \
+      -n $CC_NAME \
+      -v 1.0 \
+      -c '{"Args":["msg","hello blockchain"]}' \
+      -P "AND('Org1MSP.member','Org2MSP.member')" \
+      --tls \
+      --cafile ${ORDERER_TLS_ROOTCERT_FILE} \
+      --peerAddresses peer0.org1.example.com:7051 \
+      --tlsRootCertFiles ${ORG1_TLS_ROOTCERT_FILE}
 
-echo "Waiting for instantiation request to be committed ..."
-sleep 10
-echo "Ready to use the network ..."root@fabric01:~/fabric/fabric-samples/rb-test-network#
+  echo "Waiting for instantiation request to be committed ..."
+  sleep 10
+  echo "Ready to use the network ..."
+}
+
+# start the network with a custom chaincode
+startNetworkWithChaincode
 ```
 
-The stop.sh script is used to stop and clean up the network.
-
+Add the following to the stop.sh script.
 ```bash
 #!/bin/bash
 # Exit on first error
@@ -102,6 +100,79 @@ set -e
 # bring down the network and clear all relevant data without the crypto artifacts
 cd ../first-network
 echo y | ./byfn.sh down
+```
+
+Add the following to the addCC.sh script.
+```bash
+#!/bin/bash
+# Exit on first error
+set -e
+
+CC_CHANNEL_NAME=channel1
+CC_NAME=sacc3
+CC_SRC_PATH=github.com/chaincode/sacc3
+
+addNewChaincode() {
+  cd ../first-network
+
+  CONFIG_ROOT=/opt/gopath/src/github.com/hyperledger/fabric/peer
+  ORG1_MSPCONFIGPATH=${CONFIG_ROOT}/crypto/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp
+  ORG1_TLS_ROOTCERT_FILE=${CONFIG_ROOT}/crypto/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/ca.crt
+  ORG2_MSPCONFIGPATH=${CONFIG_ROOT}/crypto/peerOrganizations/org2.example.com/users/Admin@org2.example.com/msp
+  ORG2_TLS_ROOTCERT_FILE=${CONFIG_ROOT}/crypto/peerOrganizations/org2.example.com/peers/peer0.org2.example.com/tls/ca.crt
+  ORDERER_TLS_ROOTCERT_FILE=${CONFIG_ROOT}/crypto/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem
+
+  set -x
+
+  echo "Installing smart contract: $CC_NAME on peer0.org1.example.com"
+  docker exec \
+    -e CORE_PEER_LOCALMSPID=Org1MSP \
+    -e CORE_PEER_ADDRESS=peer0.org1.example.com:7051 \
+    -e CORE_PEER_MSPCONFIGPATH=${ORG1_MSPCONFIGPATH} \
+    -e CORE_PEER_TLS_ROOTCERT_FILE=${ORG1_TLS_ROOTCERT_FILE} \
+    cli \
+    peer chaincode install \
+      -n "$CC_NAME" \
+      -v 1.0 \
+      -p "$CC_SRC_PATH" 
+
+  echo "Installing smart contract: $CC_NAME on peer0.org2.example.com"
+  docker exec \
+    -e CORE_PEER_LOCALMSPID=Org2MSP \
+    -e CORE_PEER_ADDRESS=peer0.org2.example.com:9051 \
+    -e CORE_PEER_MSPCONFIGPATH=${ORG2_MSPCONFIGPATH} \
+    -e CORE_PEER_TLS_ROOTCERT_FILE=${ORG2_TLS_ROOTCERT_FILE} \
+    cli \
+    peer chaincode install \
+      -n "$CC_NAME" \
+      -v 1.0 \
+      -p "$CC_SRC_PATH" 
+
+  echo "Instantiating smart contract: $CC_NAME on $CC_CHANNEL_NAME"
+  docker exec \
+    -e CORE_PEER_LOCALMSPID=Org1MSP \
+    -e CORE_PEER_MSPCONFIGPATH=${ORG1_MSPCONFIGPATH} \
+    cli \
+    peer chaincode instantiate \
+      -o orderer.example.com:7050 \
+      -C $CC_CHANNEL_NAME \
+      -n $CC_NAME \
+      -v 1.0 \
+      -c '{"Args":["msg","hello blockchain"]}' \
+      -P "AND('Org1MSP.member','Org2MSP.member')" \
+      --tls \
+      --cafile ${ORDERER_TLS_ROOTCERT_FILE} \
+      --peerAddresses peer0.org1.example.com:7051 \
+      --tlsRootCertFiles ${ORG1_TLS_ROOTCERT_FILE}
+
+  echo "Waiting for instantiation request to be committed ..."
+  sleep 10
+  echo "Ready to use the network ..."
+}
+
+## add new chaincode to running network
+addNewChaincode
+
 ```
 
 ## Use this chaincode
