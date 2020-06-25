@@ -15,6 +15,18 @@ http://localhost:8000
 
 # if your work is done, build the site
 docker exec -it mkdocs mkdocs build
+
+# add, commit and push your work
+git add .
+git commit -m "text" 
+git push
+
+# on pandora switch to docker/hsc
+# checkout the new version for public access
+# for https://hsc.samlinux.at
+
+git pull
+
 ```
 
 [Start reading](./docs/index.md)

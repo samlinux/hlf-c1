@@ -1,7 +1,9 @@
 # Hyperledger Fabric Learning Path
-This is my approach to study hyperledger fabric.
+This is my approach to study Hyperledger Fabric (HLF).
 
 I will cover two perspectives: 
 
-- The first view is on an administrator who wants the plan and setup an Hyperleder Fabric Network and
-- the second view is on an application developer who wants to develop an application based on an existing Hyperledger Fabric Network.
+1. The point of view on an application developer who is going to develop an application based on an existing HLF Network.
+
+- The point of view on an administrator who wants to operate, plan and set up an HLF Network.
+
