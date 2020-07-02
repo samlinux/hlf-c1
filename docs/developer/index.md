@@ -9,6 +9,8 @@ The following is a frist approch to develop a learning path for a Hyperledger Fa
 - [General steps to develop a Blockchain Application](./developAnApplication.md)
 - [How to use the Hyperledger Fabric Node SDK](./nodeSdk/index.md)
 - [Listen to HLF events with node.js](./eventListening.md)
+- [Step by step - how to access HLF ledger data](./nodejs-example_02.md)
+
 
 ## Chaincode Development
 - [Chaincode Development Environment (chaincode-dev-docker)](./chaincodeDevEnv.md)
@@ -18,6 +20,7 @@ The following is a frist approch to develop a learning path for a Hyperledger Fa
 ### Chaincode Basics
 
 ### Using CouchDB
+
 
 
 ## Slides
@@ -31,6 +34,13 @@ The following is a frist approch to develop a learning path for a Hyperledger Fa
 - <a href="https://github.com/samlinux/hsc-htaldwn" target="_blank">How to access HLF ledger data with Node.js</a>
 
 - <a href="https://github.com/samlinux/hsc-example02" target="_blank">How to access HLF ledger data with Node.js, example_02 chaincode</a>
+
+- <a href="https://github.com/samlinux/hsc-restapi" target="_blank">How to access HLF ledger data with Node.js, example_02 chaincode, presentation from 04.07.20</a>
+
+
+
+## Helper - snippets
+- [Docker snippets](./dockerHelper.md)
 
 ## Links
 - <a href="https://github.com/wsargent/docker-cheat-sheet" target="_blank">Docker Cheat Sheat</a>
