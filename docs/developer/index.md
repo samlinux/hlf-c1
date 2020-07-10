@@ -16,6 +16,7 @@ The following is a frist approch to develop a learning path for a Hyperledger Fa
 - [Chaincode Development Environment (chaincode-dev-docker)](./chaincodeDevEnv.md)
 - [How to run byfn as testing network](./byfnOwnChaincode.md)
 - [Install/Upgrade Chaincode](./installUpgradeChaincode.md)
+- [How to modify CC ex02](./modify_cc_ex02.md)
 
 ### Chaincode Basics
 

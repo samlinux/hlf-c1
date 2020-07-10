@@ -33,11 +33,15 @@ startNetworkWithChaincode() {
   echo y | ./byfn.sh up -a -n -c $CC_CHANNEL_NAME
 
   CONFIG_ROOT=/opt/gopath/src/github.com/hyperledger/fabric/peer
-  ORG1_MSPCONFIGPATH=${CONFIG_ROOT}/crypto/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp
-  ORG1_TLS_ROOTCERT_FILE=${CONFIG_ROOT}/crypto/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/ca.crt
-  ORG2_MSPCONFIGPATH=${CONFIG_ROOT}/crypto/peerOrganizations/org2.example.com/users/Admin@org2.example.com/msp
-  ORG2_TLS_ROOTCERT_FILE=${CONFIG_ROOT}/crypto/peerOrganizations/org2.example.com/peers/peer0.org2.example.com/tls/ca.crt
-  ORDERER_TLS_ROOTCERT_FILE=${CONFIG_ROOT}/crypto/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem
+  Org1Path=$CONFIG_PATH/crypto/peerOrganizations/org1.example.com
+  Org2Path=$CONFIG_PATH/crypto/peerOrganizations/org2.example.com
+  TlsPath=$CONFIG_PATH/crypto/ordererOrganizations/example.com/orderers/orderer.example.com
+  
+  ORG1_MSPCONFIGPATH=${Org1Path}/users/Admin@org1.example.com/msp
+  ORG1_TLS_ROOTCERT_FILE=${Org1Path}//peers/peer0.org1.example.com/tls/ca.crt
+  ORG2_MSPCONFIGPATH=${Org2Path}/users/Admin@org2.example.com/msp
+  ORG2_TLS_ROOTCERT_FILE=${Org2Path}/peers/peer0.org2.example.com/tls/ca.crt
+  ORDERER_TLS_ROOTCERT_FILE=${TlsPath}/msp/tlscacerts/tlsca.example.com-cert.pem
 
   set -x
 
@@ -109,8 +113,8 @@ Add the following to the addCC.sh script.
 set -e
 
 CC_CHANNEL_NAME=channel1
-CC_NAME=sacc3
-CC_SRC_PATH=github.com/chaincode/sacc3
+CC_NAME=go02
+CC_SRC_PATH=github.com/chaincode/go02
 
 addNewChaincode() {
   cd ../first-network
@@ -158,7 +162,7 @@ addNewChaincode() {
       -C $CC_CHANNEL_NAME \
       -n $CC_NAME \
       -v 1.0 \
-      -c '{"Args":["msg","hello blockchain"]}' \
+      -c '{"Args":["init","a","100","b","100"]}' \
       -P "AND('Org1MSP.member','Org2MSP.member')" \
       --tls \
       --cafile ${ORDERER_TLS_ROOTCERT_FILE} \
@@ -184,7 +188,7 @@ docker exec -it cli bash
 # we set some environment vars as placeholders to reduce the cli command
 export TEST_CHANNEL_NAME=channel1
 
-export TEST_CC_NAME=sacc
+export TEST_CC_NAME=go02
 
 export TEST_CA_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem
 
@@ -196,10 +200,10 @@ export TEST_TLS_ROOT_CERT_ORG2=/opt/gopath/src/github.com/hyperledger/fabric/pee
 printenv | grep TEST
 
 # query the ledger
-peer chaincode query -C $TEST_CHANNEL_NAME -n $TEST_CC_NAME -c '{"Args":["query","msg"]}'
+peer chaincode query -C $TEST_CHANNEL_NAME -n $TEST_CC_NAME -c '{"Args":["query","a"]}'
 
 # store something to the ledger
-peer chaincode invoke -o orderer.example.com:7050 --tls true --cafile $TEST_CA_FILE -C $TEST_CHANNEL_NAME -n $TEST_CC_NAME --peerAddresses peer0.org1.example.com:7051 --tlsRootCertFiles $TEST_TLS_ROOT_CERT_ORG1 --peerAddresses peer0.org2.example.com:9051 --tlsRootCertFiles $TEST_TLS_ROOT_CERT_ORG2 -c '{"Args":["set","msg2","Hello fabric"]}'
+peer chaincode invoke -o orderer.example.com:7050 --tls true --cafile $TEST_CA_FILE -C $TEST_CHANNEL_NAME -n $TEST_CC_NAME --peerAddresses peer0.org1.example.com:7051 --tlsRootCertFiles $TEST_TLS_ROOT_CERT_ORG1 --peerAddresses peer0.org2.example.com:9051 --tlsRootCertFiles $TEST_TLS_ROOT_CERT_ORG2 -c '{"Args":["addKey","c","1000"]}'
 
-peer chaincode invoke -o orderer.example.com:7050 --tls true --cafile $TEST_CA_FILE -C $TEST_CHANNEL_NAME -n $TEST_CC_NAME --peerAddresses peer0.org1.example.com:7051 --tlsRootCertFiles $TEST_TLS_ROOT_CERT_ORG1 --peerAddresses peer0.org2.example.com:9051 --tlsRootCertFiles $TEST_TLS_ROOT_CERT_ORG2 -c '{"Args":["set","msg2","Hello fabric3"]}'
+peer chaincode invoke -o orderer.example.com:7050 --tls true --cafile $TEST_CA_FILE -C $TEST_CHANNEL_NAME -n $TEST_CC_NAME --peerAddresses peer0.org1.example.com:7051 --tlsRootCertFiles $TEST_TLS_ROOT_CERT_ORG1 --peerAddresses peer0.org2.example.com:9051 --tlsRootCertFiles $TEST_TLS_ROOT_CERT_ORG2 -c '{"Args":["invoke","c","a","500"]}'
 ```
