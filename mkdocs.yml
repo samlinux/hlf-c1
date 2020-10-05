@@ -10,5 +10,6 @@ extra_css:
 nav:
   - Home: index.md
   - Developer Learning Path: developer/index.md
-  - Administrator Learning Path: administrator/index.md
+  - Administrator Learning Path 1.4.x: administrator/index.md
+  - Administrator Learning Path 2.2.x: administrator2/index.md
   - Release Notes: about/release-notes.md
