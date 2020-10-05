@@ -1,5 +1,5 @@
 # Setup
-These steps describes a fabric installation on a DigitalOcean Droplet.
+These steps describes a HLF 2.2.x installation on a DigitalOcean Droplet.
 
 ## Droplet 
 Digital Ocean Droplet, 1 CPU, 2 GB, 50 GB SSD  
@@ -25,30 +25,6 @@ timedatectl set-timezone Europe/Vienna
 date
 ```
 
-## Secure your installation
-We secure our installation with ufw.
-```bash
-# check if ufw is installed (should be by default)
-ufw status
-
-# set default behavier
-ufw default deny incoming
-ufw default allow outgoing
-
-# allow only ssh access
-ufw allow ssh
-
-# show added rules
-ufw show added
-
-# enable the firewall
-ufw enable
-
-# check the status again 
-ufw status
-```
-
-
 ## Install Docker
 The following steps are required to install docker on the Droplet.
 
@@ -70,7 +46,6 @@ sudo add-apt-repository \
   "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
   $(lsb_release -cs) \
   stable"
-
 
 # install docker engine
 apt-get update
@@ -115,12 +90,6 @@ source $HOME/.profile
 go version
 ```
 
-**Second**, you should (again, in the appropriate startup file) extend your command search path to include the Go bin directory, such as the following example for bash under Linux:
-
-```bash
-export PATH=$PATH:$GOPATH/bin
-```
-
 ## Install node.js
 
 ```bash
@@ -153,7 +122,6 @@ cd fabric
 # latest production ready release, omit all version identifiers.
 curl -sSL https://bit.ly/2ysbOFE | bash -s
 
-
 # check downloaded images
 docker images
 
@@ -163,7 +131,7 @@ PATH=/root/fabric/fabric-samples/bin:$PATH
 ```
 
 ## Check the installation
-The build your first network (BYFN) scenario provisions a sample Hyperledger Fabric network consisting of two organizations, each maintaining two peer nodes. It also will deploy a "Solo" ordering service by default, though other ordering service implementations are available. To test your installationen we can start the network.
+The fabric-samples provisions a sample Hyperledger Fabric test-network consisting of two organizations, each maintaining one peer nodes. It also will deploy a RAFT ordering service by default. To test your installationen we can start the network.
 
 ```bash
 # switch to the base folder
@@ -196,11 +164,26 @@ docker-compose -f docker/docker-compose-test-net.yaml ps
 
 ## Interacting with the network
 
+tmux control
+```bash
+# start a new tmux session
+tmux new -s fabric
 
-# Environment variables for Org1
+# show all logs
+docker-compose -f docker/docker-compose-test-net.yaml logs -f -t
+
+# open a new panel
+CTRL + b \" 
+
+# jump between panels
+CTRL + b + q 1
+```
+
+### Environment variables for peer Org1
 
 ```bash
 export FABRIC_CFG_PATH=$HOME/fabric/fabric-samples/config/
+
 export CORE_PEER_TLS_ENABLED=true
 export CORE_PEER_LOCALMSPID="Org1MSP"
 export CORE_PEER_TLS_ROOTCERT_FILE=${PWD}/organizations/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/ca.crt
@@ -211,5 +194,55 @@ export CORE_PEER_ADDRESS=localhost:7051
 Run the following command to initialize the ledger with assets:
 ```bash
 export CHANNEL_NAME="channel1"
+
 peer chaincode invoke -o localhost:7050 --ordererTLSHostnameOverride orderer.example.com --tls --cafile ${PWD}/organizations/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem -C $CHANNEL_NAME -n basic --peerAddresses localhost:7051 --tlsRootCertFiles ${PWD}/organizations/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/ca.crt --peerAddresses localhost:9051 --tlsRootCertFiles ${PWD}/organizations/peerOrganizations/org2.example.com/peers/peer0.org2.example.com/tls/ca.crt -c '{"function":"InitLedger","Args":[]}'
+```
+
+#### Query the leder
+```bash
+# Read the last state of all assets
+peer chaincode query -C $CHANNEL_NAME -n basic -c '{"Args":["GetAllAssets"]}' | jq .
+
+# Read an asset 
+peer chaincode query -C $CHANNEL_NAME -n basic -c '{"Args":["ReadAsset","asset1"]}' | jq .
+```
+
+#### Invoke the ledger
+
+```bash 
+peer chaincode invoke -o localhost:7050 --ordererTLSHostnameOverride orderer.example.com --tls --cafile ${PWD}/organizations/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem -C $CHANNEL_NAME -n basic --peerAddresses localhost:7051 --tlsRootCertFiles ${PWD}/organizations/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/ca.crt --peerAddresses localhost:9051 --tlsRootCertFiles ${PWD}/organizations/peerOrganizations/org2.example.com/peers/peer0.org2.example.com/tls/ca.crt -c '{"function":"TransferAsset","Args":["asset6","Roland"]}'
+```
+
+#### Create an asset
+```bash
+
+peer chaincode invoke -o localhost:7050 --ordererTLSHostnameOverride orderer.example.com --tls --cafile ${PWD}/organizations/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem -C $CHANNEL_NAME -n basic --peerAddresses localhost:7051 --tlsRootCertFiles ${PWD}/organizations/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/ca.crt --peerAddresses localhost:9051 --tlsRootCertFiles ${PWD}/organizations/peerOrganizations/org2.example.com/peers/peer0.org2.example.com/tls/ca.crt -c '{"function":"CreateAsset","Args":["asset7","green","10","Roland","500"]}'
+```
+
+#### Update an asset
+```bash
+peer chaincode invoke -o localhost:7050 --ordererTLSHostnameOverride orderer.example.com --tls --cafile ${PWD}/organizations/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem -C $CHANNEL_NAME -n basic --peerAddresses localhost:7051 --tlsRootCertFiles ${PWD}/organizations/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/ca.crt --peerAddresses localhost:9051 --tlsRootCertFiles ${PWD}/organizations/peerOrganizations/org2.example.com/peers/peer0.org2.example.com/tls/ca.crt -c '{"function":"UpdateAsset","Args":["asset7","green","10","Roland","1500"]}'
+```
+
+#### Transfer an asset
+```bash
+peer chaincode invoke -o localhost:7050 --ordererTLSHostnameOverride orderer.example.com --tls --cafile ${PWD}/organizations/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem -C $CHANNEL_NAME -n basic --peerAddresses localhost:7051 --tlsRootCertFiles ${PWD}/organizations/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/ca.crt --peerAddresses localhost:9051 --tlsRootCertFiles ${PWD}/organizations/peerOrganizations/org2.example.com/peers/peer0.org2.example.com/tls/ca.crt -c '{"function":"TransferAsset","Args":["asset7","Joana"]}'
+```
+
+#### Delete an asset
+```bash
+peer chaincode invoke -o localhost:7050 --ordererTLSHostnameOverride orderer.example.com --tls --cafile ${PWD}/organizations/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem -C $CHANNEL_NAME -n basic --peerAddresses localhost:7051 --tlsRootCertFiles ${PWD}/organizations/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/ca.crt --peerAddresses localhost:9051 --tlsRootCertFiles ${PWD}/organizations/peerOrganizations/org2.example.com/peers/peer0.org2.example.com/tls/ca.crt -c '{"function":"DeleteAsset","Args":["asset1"]}'
+```
+
+
+### Switch to peer Org2
+We can switch to work with peer Org2 peer0.org2.example.com with changeing the following evironment variables. 
+```bash 
+# Environment variables for Org2
+
+export CORE_PEER_TLS_ENABLED=true
+export CORE_PEER_LOCALMSPID="Org2MSP"
+export CORE_PEER_TLS_ROOTCERT_FILE=${PWD}/organizations/peerOrganizations/org2.example.com/peers/peer0.org2.example.com/tls/ca.crt
+export CORE_PEER_MSPCONFIGPATH=${PWD}/organizations/peerOrganizations/org2.example.com/users/Admin@org2.example.com/msp
+export CORE_PEER_ADDRESS=localhost:9051
 ```
